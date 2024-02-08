@@ -5,6 +5,9 @@
 #include <stdbool.h>
 #include <inttypes.h>
 #include <ili9341.h>
+#define SPEAKER_PORT PORTD
+#define SPEAKER_DDR DDRD
+#define SPEAKER_PIN 2
 
 //function prototype
 
@@ -279,14 +282,14 @@ void playSound(float duration, float frequency){
     half_period = wavelength/2;
 
     //pin for buzzer
-    DDRD |= (1 << "Buzzer pin");
+    SPEAKER_DDR |= (1 << "Buzzer pin");
 
     for (i=0; i<cycles;i++)
     {
         _delay_ms(half_period);
-        PORTB |= (1<<"Buzzer pin");
+        SPEAKER_PORT |= (1<< SPEAKER_PIN );
         _delay_ms(half_period);
-        PORTB |= (1<<"Buzzer pin");
+        SPEAKER_PORT |= (1<< SPEAKER_PIN );
     }
 
     return;
