@@ -48,6 +48,16 @@ int main(void)
   drawPaddle(playeronex,100,50);
   drawPaddle(playertwox,100,50);
   drawBall(50,50);
+
+
+  //paddle
+  
+  //ball
+
+  //score
+
+  //audio
+  
   while (1) 
   {
     _delay_ms(100);
