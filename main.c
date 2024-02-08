@@ -76,7 +76,7 @@ int main(void)
     uint16_t p2_bounds =;
   
 ///////////////////////////////ball////////////////////////////////////
-
+//ball hitting bat
  if ((ballX == 0) && (ballChangeX == 0))
   {
     ballY = p1 + batsize / 2 - 1;
@@ -101,7 +101,7 @@ int main(void)
 
 //player scoring
   ballX = ballX + ballChangeX;
-  if (ballX > 30)
+  if (ballX > 300)
   {
     ballX = 0;
     ballChangeX = 0;
@@ -112,7 +112,7 @@ int main(void)
       playerOneVictory();
     }
   } //P2 has missed, P1 wins
-  if (ballX < 0)
+  if (ballX < 20)
   {
     ballX = 30;
     ballChangeX = 0;
@@ -125,7 +125,7 @@ int main(void)
   } //P1 has missed, P2 wins
 
 
-//ball position court
+//ball position, courts
   if (ballX == 29)
   { //ball is in player 2's court
     if (abs(ballY - p2 - 1) < 3)
@@ -173,10 +173,10 @@ int main(void)
   }
   ballY = ballY + ballChangeYtemp;
 
-  //ball hitting walls
-  if (ballY > 300)
+  //ball hitting top/bottom walls
+  if (ballY > 220)
   {
-    ballY = 300;
+    ballY = 220;
     ballChangeY = -1;
     speakerTone = ball_wall_tone;
   } //hit top wall
@@ -186,6 +186,7 @@ int main(void)
     ballChangeY = 1;
     speakerTone = ball_wall_tone;
   } //hit bottom wall
+
   ///////////////////////////////ball////////////////////////////////////
 
 
