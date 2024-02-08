@@ -227,6 +227,7 @@ int main(void)
 //function for score
 //display score
 void displayScore( int score_p1, int score_p2) {
+  //give position to score board
     printf("Player 1: %d | Player 2: %d\n", score_p1,score_p2);
 }
 
