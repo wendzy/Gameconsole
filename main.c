@@ -5,6 +5,15 @@
 #include <stdbool.h>
 #include <inttypes.h>
 #include <ili9341.h>
+
+//function prototype
+
+
+//score function
+void displayScore( int score_p1, int score_p2);
+void updateScore(int pos_ball,int *score_p1, int *score_p2);
+int winCon(int score_p1, int score_p2, int max_score);
+
 //test pull
 uint16_t playeronex = 5;
 uint16_t playertwox = 315;
@@ -26,7 +35,10 @@ void drawBall(int x, int y)
 
     ili9341_fillrect(x,y,8,8,ILI9341_COLOR_WHITE);
 }
-
+//score function declaration
+void displayScore( int score_p1, int score_p2);
+void updateScore(int pos_ball,int *score_p1, int *score_p2);
+int winCon(int score_p1, int score_p2, int max_score);
   
 
 int main(void)
@@ -52,9 +64,17 @@ int main(void)
 
   //paddle
   
-  
   //ball
 
+  //score
+    int score_p1 = 0;
+    int score_p2 = 0;
+    int max_score = 10;
+    // maximun bound for player1
+    int p1_bounds =;
+  // maximun bound for player2
+    int p2_bounds =;
+  
 ///////////////////////////////ball////////////////////////////////////
 
  if ((ballX == 0) && (ballChangeX == 0))
@@ -177,7 +197,58 @@ int main(void)
   
   while (1) 
   {
+        //display score
+        displayScore(score_p1, score_p2);
+        int pos_ball = ;
+        //update score
+        if (pos_ball <  p1_bounds || pos_ball > p2_bounds)
+        {
+            updateScore(pos_ball,&score_p1,&score_p2);
+        }
+        //display the winner
+        int winner = winCon(score_p1,score_p2,max_score);
+        if (winner != 0){
+            printf("Game over!\n");
+            if (winner == 1)
+            {
+                printf("Player 1 wins! \n");
+            }
+            else 
+            {
+                printf("Player 2 wins! \n");
+            }
+        break;
+        }
     _delay_ms(100);
-}
- 
   }
+ 
+}
+
+//function for score
+//display score
+void displayScore( int score_p1, int score_p2) {
+    printf("Player 1: %d | Player 2: %d\n", score_p1,score_p2);
+}
+
+// update score
+void updateScore(int pos_ball,int *score_p1,int *score_p2) {
+    if (pos_ball < p1_bounds){
+        (*score_p1) ++;
+    }
+    else if (pos_ball > p2_bounds)
+    {
+        (*score_p2) ++;
+    }
+    
+}
+
+// check winner
+int winCon(int score_p1,int score_p2, int max_score){
+    if (score_p1 >= max_score){
+        return 1;
+    } 
+    else if(score_p2 >= max_score){
+        return 2;
+    }
+    return 0;
+}
