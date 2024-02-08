@@ -23,11 +23,6 @@ int winCon(int score_p1, int score_p2, int max_score);
 void playSound(float duration, float frequency)
 ///////////////////////////////audio////////////////////////////////////
 
-//test pull
-uint16_t playeronex = 5;
-uint16_t playertwox = 315;
-uint16_t playeroney = 0;
-uint16_t playertwoy = 0;
 
 void drawPaddle(int x, int y, int s)
 { //draw paddle starting at x,y, extending s down
@@ -71,12 +66,23 @@ int main(void)
   drawBall(50,50);
 
 
-  //paddle
-  
-  
+  //paddle init 
+  //variable for p1 and p2 position
+  uint16_t p1x = 5;
+  uint16_t p2x = 315;
+  uint16_t p1y = 0;
+  uint16_t p2y = 0;
+
+  // GPIO pins init
+  //player 1
+  DDRC &= ~(1 << PINC4) | (1 << PINC5); // set pin as input
+  PORTC |= (1 << PINC4)| (1 << PINC5); //set pin as high 
+  //player 2
+  DDRD &= ~(1 << PIND3) | (1 << PIND4); // set pin as input
+  PORTD |= (1 << PIND3)| (1 << PIND4); //set pin as high 
   //ball
 
-    ///////////////////////////////score////////////////////////////////////
+  ///////////////////////////////score////////////////////////////////////
     uint16_t score_p1 = 0;
     uint16_t score_p2 = 0;
     uint16_t max_score = 10;
@@ -84,23 +90,23 @@ int main(void)
     uint16_t p1_bounds =;
     // maximun bound for player2
     uint16_t p2_bounds =;
-    ///////////////////////////////score////////////////////////////////////
-
-   ///////////////////////////////audio////////////////////////////////////
-  //audio put in the function of ball paddle and ball later
+///////////////////////////////score////////////////////////////////////
+  
+///////////////////////////////audio////////////////////////////////////
+//audio put in the function of ball paddle and ball later
     //wall sound (play when ball touch the wall)
     playSound(16,226);
     //paddle sound (play when ball touch the paddle)
     playSound(96,459);
     //point sound
     playSound(257,490);
-  ///////////////////////////////audio////////////////////////////////////
+///////////////////////////////audio////////////////////////////////////
 
 
-  
-  while (1) 
+
+while (1) 
   {
-    ///////////////////////////////ball////////////////////////////////////
+///////////////////////////////ball////////////////////////////////////
 //ball hitting bat
  if ((ballX == 0) && (ballChangeX == 0))
   {
@@ -213,14 +219,39 @@ int main(void)
   } //hit bottom wall
 
   ///////////////////////////////ball////////////////////////////////////
-   ///////////////////////////////score////////////////////////////////////
+
+
+    
+  //score
+
+  
+  //audio
+
+  
+  ///////////////////////////////Paddle////////////////////////////////////
+//update paddle position
+  if {
+
+  }
+  else if{
+    
+  }
+
+
+//draw paddle
+drawPaddle(p1x,p1y,batsize);
+drawPaddle(p2x,p2y,batsize);
+
+=======
+///////////////////////////////score////////////////////////////////////
+
 //display score
         displayScore(score_p1, score_p2);
         int pos_ball = ;
         //update score
         if (pos_ball <  p1_bounds || pos_ball > p2_bounds)
         {
-            //point sound
+//point sound
             playSound(257,490);
             updateScore(pos_ball,&score_p1,&score_p2);
         }
@@ -238,11 +269,11 @@ int main(void)
             }
         break;
         }
-  ///////////////////////////////score////////////////////////////////////
+///////////////////////////////score////////////////////////////////////
     _delay_ms(100);
-  }
- 
 }
+ 
+  }
 
 ///////////////////////////////score////////////////////////////////////
 //function for score
