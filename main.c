@@ -72,7 +72,7 @@ int main(void)
   
   //ball
 
-  //score
+    ///////////////////////////////score////////////////////////////////////
     uint16_t score_p1 = 0;
     uint16_t score_p2 = 0;
     uint16_t max_score = 10;
@@ -80,7 +80,9 @@ int main(void)
     uint16_t p1_bounds =;
     // maximun bound for player2
     uint16_t p2_bounds =;
+    ///////////////////////////////score////////////////////////////////////
 
+   ///////////////////////////////audio////////////////////////////////////
   //audio put in the function of ball paddle and ball later
     //wall sound (play when ball touch the wall)
     playSound(16,226);
@@ -88,8 +90,13 @@ int main(void)
     playSound(96,459);
     //point sound
     playSound(257,490);
+  ///////////////////////////////audio////////////////////////////////////
 
-///////////////////////////////ball////////////////////////////////////
+
+  
+  while (1) 
+  {
+    ///////////////////////////////ball////////////////////////////////////
 //ball hitting bat
  if ((ballX == 0) && (ballChangeX == 0))
   {
@@ -202,16 +209,7 @@ int main(void)
   } //hit bottom wall
 
   ///////////////////////////////ball////////////////////////////////////
-
-    
-  //score
-
-  
-  //audio
-
-  
-  while (1) 
-  {
+   ///////////////////////////////score////////////////////////////////////
 //display score
         displayScore(score_p1, score_p2);
         int pos_ball = ;
@@ -236,6 +234,7 @@ int main(void)
             }
         break;
         }
+  ///////////////////////////////score////////////////////////////////////
     _delay_ms(100);
   }
  
@@ -271,6 +270,7 @@ int winCon(int score_p1,int score_p2, int max_score){
     }
     return 0;
 }
+///////////////////////////////score////////////////////////////////////
 ///////////////////////////////audio////////////////////////////////////
 void playSound(float duration, float frequency){
     long int i,cycles;
@@ -295,3 +295,4 @@ void playSound(float duration, float frequency){
     return;
 
 }
+///////////////////////////////audio////////////////////////////////////
