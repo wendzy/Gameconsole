@@ -56,6 +56,7 @@ int main(void)
 
   //score
 
+hello
   //audio
   
   while (1) 
