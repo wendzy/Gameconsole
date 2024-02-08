@@ -50,7 +50,7 @@ void ili9341_backlight(uint8_t light)
 //
 void ili9341_spi_init(void)
 {
-  DDRB  |= (1<<1)|(1<<2)|(1<<3)|(1<<5); //CS,SS,MOSI,SCK as output(although SS will be unused throughout the program)
+  DDRB  |= (1<<1)|(1<<2)|(1<<3)|(1<<5); //CS,SS,MISO,SCK as output(although SS will be unused throughout the program)
   SPCR   = (1<<SPE)|(1<<MSTR);          //mode 0,fosc/4
   SPSR  |= (1<<SPI2X);                  //doubling spi speed.i.e final spi speed-fosc/2
   PORTB |= (1<<1);                      //cs off during startup
