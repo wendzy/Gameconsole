@@ -67,13 +67,13 @@ int main(void)
   //ball
 
   //score
-    int score_p1 = 0;
-    int score_p2 = 0;
-    int max_score = 10;
+    uint16_t score_p1 = 0;
+    uint16_t score_p2 = 0;
+    uint16_t max_score = 10;
     // maximun bound for player1
-    int p1_bounds =;
-  // maximun bound for player2
-    int p2_bounds =;
+    uint16_t p1_bounds =;
+    // maximun bound for player2
+    uint16_t p2_bounds =;
   
 ///////////////////////////////ball////////////////////////////////////
 
