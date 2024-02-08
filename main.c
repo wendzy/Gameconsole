@@ -282,7 +282,7 @@ void playSound(float duration, float frequency){
     half_period = wavelength/2;
 
     //pin for buzzer
-    SPEAKER_DDR |= (1 << "Buzzer pin");
+    SPEAKER_DDR |= (1 << SPEAKER_PIN );
 
     for (i=0; i<cycles;i++)
     {
