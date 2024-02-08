@@ -22,7 +22,60 @@ int winCon(int score_p1, int score_p2, int max_score);
 // audio function
 void playSound(float duration, float frequency)
 ///////////////////////////////audio////////////////////////////////////
+///////////////////////////////Paddle////////////////////////////////////
+  //paddle init 
+  //variable for p1 and p2 position
+  uint16_t p1x = 5;
+  uint16_t p2x = 315;
+  uint16_t p1y = 0;
+  uint16_t p2y = 0;
+  uint16_t batsize = 50;
 
+  // GPIO pins init
+  //player 1
+  DDRC &= ~(1 << PINC4) | (1 << PINC5); // set pin as input
+  PORTC |= (1 << PINC4)| (1 << PINC5); //set pin as high 
+  //player 2
+  DDRD &= ~(1 << PIND3) | (1 << PIND4); // set pin as input
+  PORTD |= (1 << PIND3)| (1 << PIND4); //set pin as high 
+  
+  //paddle update position
+  void p1_pos() {
+  if (bit_is_clear(PINC, 4)) //if button is pressed, check low
+  { // shift up
+    p1y += 1;
+  }
+  else if (bit_is_clear(PINC, 5))
+  { // shift down
+    p1y -= 1;
+  }
+
+  }
+   void p2_pos() {
+  if (bit_is_clear(PINB, 3)) //if button is pressed, check low
+  { // shift up
+    p2y += 1;
+  }
+  else if (bit_is_clear(PINB, 3))
+  { // shift down
+    p2y -= 1;
+  }
+  }
+
+  //check pos limit
+  int check_p(int x){
+  if (x > boarder height) {
+  x = boarder height;
+  }
+  else if (x < boarder height){
+  x = 0 + batsize;
+  }
+  else{
+}
+    return x;
+  }
+
+  ///////////////////////////////Paddle////////////////////////////////////
 
 void drawPaddle(int x, int y, int s)
 { //draw paddle starting at x,y, extending s down
@@ -61,25 +114,7 @@ int main(void)
   ili9341_settextcolor(ILI9341_COLOR_CYAN, ILI9341_COLOR_BLACK);
   ili9341_settextsize(4);
   ili9341_setcursor(50,50);
-  drawPaddle(playeronex,100,50);
-  drawPaddle(playertwox,100,50);
-  drawBall(50,50);
 
-
-  //paddle init 
-  //variable for p1 and p2 position
-  uint16_t p1x = 5;
-  uint16_t p2x = 315;
-  uint16_t p1y = 0;
-  uint16_t p2y = 0;
-
-  // GPIO pins init
-  //player 1
-  DDRC &= ~(1 << PINC4) | (1 << PINC5); // set pin as input
-  PORTC |= (1 << PINC4)| (1 << PINC5); //set pin as high 
-  //player 2
-  DDRD &= ~(1 << PIND3) | (1 << PIND4); // set pin as input
-  PORTD |= (1 << PIND3)| (1 << PIND4); //set pin as high 
  ///////////////////////////////ball////////////////////////////////////
   int playerOneScore = 0;
   int playerTwoScore = 0;
@@ -89,6 +124,9 @@ int main(void)
   int ballChangeY = 0;
   int speakerTone = 0;
   ///////////////////////////////ball////////////////////////////////////
+ 
+ 
+ 
   ///////////////////////////////score////////////////////////////////////
     uint16_t score_p1 = 0;
     uint16_t score_p2 = 0;
@@ -225,23 +263,19 @@ while (1)
     speakerTone = ball_wall_tone;
   } //hit bottom wall
 
-  ///////////////////////////////ball////////////////////////////////////
+    ///////////////////////////////ball////////////////////////////////////
 
   ///////////////////////////////Paddle////////////////////////////////////
-//update paddle position
-  if {
-
-  }
-  else if{
-    
-  }
-
-
+//check if paddle pos over boarder
+p1y = p1_pos();
+p2y = p2_pos();
+p1y = check_p(p1y);
+p2y = check_p(p2y);
 //draw paddle
 drawPaddle(p1x,p1y,batsize);
 drawPaddle(p2x,p2y,batsize);
 
-///////////////////////////////Paddle////////////////////////////////////
+ ///////////////////////////////Paddle////////////////////////////////////
 ///////////////////////////////score////////////////////////////////////
 
 //display score
