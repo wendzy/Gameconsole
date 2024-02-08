@@ -52,12 +52,15 @@ int main(void)
 
   //paddle
   
+  
   //ball
 
+    
   //score
 
-hello
+  
   //audio
+
   
   while (1) 
   {
