@@ -80,8 +80,15 @@ int main(void)
   //player 2
   DDRD &= ~(1 << PIND3) | (1 << PIND4); // set pin as input
   PORTD |= (1 << PIND3)| (1 << PIND4); //set pin as high 
-  //ball
-
+ ///////////////////////////////ball////////////////////////////////////
+  int playerOneScore = 0;
+  int playerTwoScore = 0;
+  int ballX = 0;
+  int ballY = 0;
+  int ballChangeX = 0;
+  int ballChangeY = 0;
+  int speakerTone = 0;
+  ///////////////////////////////ball////////////////////////////////////
   ///////////////////////////////score////////////////////////////////////
     uint16_t score_p1 = 0;
     uint16_t score_p2 = 0;
