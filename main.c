@@ -55,7 +55,120 @@ int main(void)
   
   //ball
 
-    
+///////////////////////////////ball////////////////////////////////////
+
+ if ((ballX == 0) && (ballChangeX == 0))
+  {
+    ballY = p1 + batsize / 2 - 1;
+    if (!digitalRead(player_one_button))
+    {
+      ballChangeX = 1;
+      ballChangeY = 0;
+      speakerTone = serve_tone;
+    } //serve
+  }
+  if ((ballX == 30) && (ballChangeX == 0))
+  {
+    ballY = p2 + batsize / 2 - 1;
+    if (!digitalRead(player_two_button))
+    {
+      ballChangeX = -1;
+      ballChangeY = 0;
+      speakerTone = serve_tone;
+    } //serve
+  }
+
+
+//player scoring
+  ballX = ballX + ballChangeX;
+  if (ballX > 30)
+  {
+    ballX = 0;
+    ballChangeX = 0;
+    ballChangeY = 0;
+    playerOneScore = playerOneScore + 1;
+    if (playerOneScore == 7)
+    {
+      playerOneVictory();
+    }
+  } //P2 has missed, P1 wins
+  if (ballX < 0)
+  {
+    ballX = 30;
+    ballChangeX = 0;
+    ballChangeY = 0;
+    playerTwoScore = playerTwoScore + 1;
+    if (playerTwoScore == 7)
+    {
+      playerTwoVictory();
+    }
+  } //P1 has missed, P2 wins
+
+
+//ball position court
+  if (ballX == 29)
+  { //ball is in player 2's court
+    if (abs(ballY - p2 - 1) < 3)
+    {                               //ball is within p2's bat
+      ballChangeX = -1;             //goes back left
+      ballChangeY = ballY - p2 - 1; //change ball angle
+      if (ballChangeY == 0)
+      {
+        ballChangeY = random(-1, 2);
+      }                               //mix it up a bit
+      speakerTone = ball_paddle_tone; //hit bat
+    }
+  }
+  if (ballX == 1)
+  { //ball is in player 1's court
+    if (abs(ballY - p1 - 1) < 3)
+    {                               //ball is within p1's bat
+      ballChangeX = 1;              //goes back right
+      ballChangeY = ballY - p1 - 1; //change ball angle
+      if (ballChangeY == 0)
+      {
+        ballChangeY = random(-1, 2);
+      }                               //mix it up a bit
+      speakerTone = ball_paddle_tone; //hit bat
+    }
+  }
+
+
+  int ballChangeYtemp; //to work out half steps
+  if (ballX & 1)
+  { //on odd steps, only step if 2
+    ballChangeYtemp = ballChangeY / 2;
+  }
+  else
+  { //on even steps, step if 1 or 2
+    ballChangeYtemp = 0;
+    if (ballChangeY > 0)
+    {
+      ballChangeYtemp = 1;
+    }
+    if (ballChangeY < 0)
+    {
+      ballChangeYtemp = -1;
+    }
+  }
+  ballY = ballY + ballChangeYtemp;
+
+  //ball hitting walls
+  if (ballY > 300)
+  {
+    ballY = 300;
+    ballChangeY = -1;
+    speakerTone = ball_wall_tone;
+  } //hit top wall
+  if (ballY < 20)
+  {
+    ballY = 20;
+    ballChangeY = 1;
+    speakerTone = ball_wall_tone;
+  } //hit bottom wall
+  ///////////////////////////////ball////////////////////////////////////
+
+
   //score
 
   
