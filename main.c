@@ -13,6 +13,8 @@
 void displayScore( int score_p1, int score_p2);
 void updateScore(int pos_ball,int *score_p1, int *score_p2);
 int winCon(int score_p1, int score_p2, int max_score);
+// audio function
+void playSound(float duration, float frequency)
 
 //test pull
 uint16_t playeronex = 5;
@@ -75,7 +77,15 @@ int main(void)
     uint16_t p1_bounds =;
     // maximun bound for player2
     uint16_t p2_bounds =;
-  
+
+  //audio put in the function of ball paddle and ball later
+    //wall sound (play when ball touch the wall)
+    playSound(16,226);
+    //paddle sound (play when ball touch the paddle)
+    playSound(96,459);
+    //point sound
+    playSound(257,490);
+
 ///////////////////////////////ball////////////////////////////////////
 //ball hitting bat
  if ((ballX == 0) && (ballChangeX == 0))
@@ -205,6 +215,8 @@ int main(void)
         //update score
         if (pos_ball <  p1_bounds || pos_ball > p2_bounds)
         {
+            //point sound
+            playSound(257,490);
             updateScore(pos_ball,&score_p1,&score_p2);
         }
         //display the winner
@@ -222,10 +234,11 @@ int main(void)
         break;
         }
     _delay_ms(100);
-}
- 
   }
+ 
+}
 
+///////////////////////////////score////////////////////////////////////
 //function for score
 //display score
 void displayScore( int score_p1, int score_p2) {
@@ -254,4 +267,28 @@ int winCon(int score_p1,int score_p2, int max_score){
         return 2;
     }
     return 0;
+}
+///////////////////////////////audio////////////////////////////////////
+void playSound(float duration, float frequency){
+    long int i,cycles;
+    float half_period;
+    float wavelength;
+
+    wavelength = (1/frequency)*1000;
+    cycles = duration/wavelength;
+    half_period = wavelength/2;
+
+    //pin for buzzer
+    DDRD |= (1 << "Buzzer pin");
+
+    for (i=0; i<cycles;i++)
+    {
+        _delay_ms(half_period);
+        PORTB |= (1<<"Buzzer pin");
+        _delay_ms(half_period);
+        PORTB |= (1<<"Buzzer pin");
+    }
+
+    return;
+
 }
