@@ -101,20 +101,18 @@ while (1)
   {
 ///////////////////////////////ball////////////////////////////////////
 //ball hitting bat
- if ((ballX == 0) && (ballChangeX == 0))
+if ((ballX == 0) && (ballChangeX == 0))
   {
-    ballY = p1 + batsize / 2 - 1;
-    if (!digitalRead(player_one_button))
+    if (ballY = p1y + batsize / 2 - 1)
     {
       ballChangeX = 1;
       ballChangeY = 0;
       speakerTone = serve_tone;
     } //serve
   }
-  if ((ballX == 30) && (ballChangeX == 0))
+  if ((ballX == 300) && (ballChangeX == 0))
   {
-    ballY = p2 + batsize / 2 - 1;
-    if (!digitalRead(player_two_button))
+    if (ballY = p2y + batsize / 2 - 1)
     {
       ballChangeX = -1;
       ballChangeY = 0;
