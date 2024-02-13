@@ -64,8 +64,6 @@ int main(void)
   ili9341_setcursor(50,50);
 
  ///////////////////////////////ball////////////////////////////////////
-  int playerOneScore = 0;
-  int playerTwoScore = 0;
   int ballX = 0;
   int ballY = 0;
   int ballChangeX = 0;
