@@ -8,6 +8,12 @@
 #define SPEAKER_PORT PORTD
 #define SPEAKER_DDR DDRD
 #define SPEAKER_PIN 2
+#define SERVE_PORT PORTD
+#define SERVE_DDR DDRD
+#define SERVE_PIN 0
+#define SERVE2_PORT PORTD
+#define SERVE2_DDR DDRD
+#define SERVE2_PIN 1
 
 //function prototype
 
@@ -48,6 +54,7 @@ void playSound(float duration, float frequency)
 
 int main(void)
 {
+  PORTD |= 0b0000011;
   DDRC |= (1 << PINC5);
   DDRC &= ~(1 << PINC4); //set pin as input
   PORTC |= (1<< PINC4);     // set pin 3 of Port B as output
@@ -101,18 +108,25 @@ while (1)
 //game start serve
 if ((ballX == 0) && (ballChangeX == 0))
   {
-    if () //analog input
+    if (bit_is_clear(SERVE_PIN,0)) //analog input
     {
       ballChangeX = 1;
       ballChangeY = 0;
       serve_tone;
     } //serve
-  }
+
+     if (bit_is_clear(SERVE2_PIN,1)) //analog input
+    {
+      ballChangeX = -1;
+      ballChangeY = 0;
+      serve_tone;
+    } //serve
+
 
 //ball position, courts hitting the bat
   if (ballX == 300)
   { //ball is in player 2's court
-    if (abs(ballY - p2y - 1) < 3)
+    if (abs(ballY - p2y - 1) < )
     {                               //ball is within p2's bat
       ballChangeX = -1;             //goes back left
       ballChangeY = ballY - p2y - 1; //change ball angle
