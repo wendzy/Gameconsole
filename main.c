@@ -17,7 +17,13 @@ void displayScore( int score_p1, int score_p2);
 void updateScore(int pos_ball,int *score_p1, int *score_p2);
 int winCon(int score_p1, int score_p2, int max_score);
 ///////////////////////////////score////////////////////////////////////
-
+///////////////////////////////Paddle//////////////////////////////////// 
+void p1_pos();
+void p2_pos();
+int check_p(int x);
+void drawPaddle(int x, int y, int s);
+void drawBall(int x, int y);
+///////////////////////////////Paddle////////////////////////////////////
 ///////////////////////////////audio////////////////////////////////////
 // audio function
 void playSound(float duration, float frequency)
@@ -38,65 +44,7 @@ void playSound(float duration, float frequency)
   //player 2
   DDRD &= ~(1 << PIND3) | (1 << PIND4); // set pin as input
   PORTD |= (1 << PIND3)| (1 << PIND4); //set pin as high 
-  
-  //paddle update position
-  void p1_pos() {
-  if (bit_is_clear(PINC, 4)) //if button is pressed, check low
-  { // shift up
-    p1y += 1;
-  }
-  else if (bit_is_clear(PINC, 5))
-  { // shift down
-    p1y -= 1;
-  }
 
-  }
-   void p2_pos() {
-  if (bit_is_clear(PINB, 3)) //if button is pressed, check low
-  { // shift up
-    p2y += 1;
-  }
-  else if (bit_is_clear(PINB, 3))
-  { // shift down
-    p2y -= 1;
-  }
-  }
-
-  //check pos limit
-  int check_p(int x){
-  if (x > boarder height) {
-  x = boarder height;
-  }
-  else if (x < boarder height){
-  x = 0 + batsize;
-  }
-  else{
-}
-    return x;
-  }
-
-  ///////////////////////////////Paddle////////////////////////////////////
-
-void drawPaddle(int x, int y, int s)
-{ //draw paddle starting at x,y, extending s down
-  for (int i = 0; i < s; i++)
-  {
-    ili9341_drawpixel(x, y + i, ILI9341_COLOR_WHITE);
-    ili9341_drawpixel(x+1, y + i, ILI9341_COLOR_WHITE);
-    ili9341_drawpixel(x+2, y + i, ILI9341_COLOR_WHITE);
-  }
-}
-
-void drawBall(int x, int y)
-{ //draw 2x2 ball at x,y
-
-    ili9341_fillrect(x,y,8,8,ILI9341_COLOR_WHITE);
-}
-//score function declaration
-void displayScore( int score_p1, int score_p2);
-void updateScore(int pos_ball,int *score_p1, int *score_p2);
-int winCon(int score_p1, int score_p2, int max_score);
-  
 
 int main(void)
 {
@@ -307,7 +255,62 @@ drawPaddle(p2x,p2y,batsize);
 }
  
   }
+///////////////////////////////ball////////////////////////////////////
 
+void drawBall(int x, int y)
+{ //draw 2x2 ball at x,y
+
+    ili9341_fillrect(x,y,8,8,ILI9341_COLOR_WHITE);
+}
+///////////////////////////////ball////////////////////////////////////
+///////////////////////////////Paddle////////////////////////////////////
+  //paddle update position
+  void p1_pos() {
+  if (bit_is_clear(PINC, 4)) //if button is pressed, check low
+  { // shift up
+    p1y += 1;
+  }
+  else if (bit_is_clear(PINC, 5))
+  { // shift down
+    p1y -= 1;
+  }
+
+  }
+   void p2_pos() {
+  if (bit_is_clear(PINB, 3)) //if button is pressed, check low
+  { // shift up
+    p2y += 1;
+  }
+  else if (bit_is_clear(PINB, 3))
+  { // shift down
+    p2y -= 1;
+  }
+  }
+
+  //check pos limit
+  int check_p(int x){
+  if (x > boarder height) {
+  x = boarder height;
+  }
+  else if (x < boarder height){
+  x = 0 + batsize;
+  }
+  else{
+}
+    return x;
+  }
+
+void drawPaddle(int x, int y, int s)
+{ //draw paddle starting at x,y, extending s down
+  for (int i = 0; i < s; i++)
+  {
+    ili9341_drawpixel(x, y + i, ILI9341_COLOR_WHITE);
+    ili9341_drawpixel(x+1, y + i, ILI9341_COLOR_WHITE);
+    ili9341_drawpixel(x+2, y + i, ILI9341_COLOR_WHITE);
+  }
+}
+
+///////////////////////////////Paddle////////////////////////////////////
 ///////////////////////////////score////////////////////////////////////
 //function for score
 //display score
