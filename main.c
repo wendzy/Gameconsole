@@ -107,7 +107,7 @@ if ((ballX == 0) && (ballChangeX == 0))
     {
       ballChangeX = 1;
       ballChangeY = 0;
-      speakerTone = serve_tone;
+      serve_tone;
     } //serve
   }
   if ((ballX == 300) && (ballChangeX == 0))
@@ -116,7 +116,7 @@ if ((ballX == 0) && (ballChangeX == 0))
     {
       ballChangeX = -1;
       ballChangeY = 0;
-      speakerTone = serve_tone;
+      serve_tone;
     } //serve
   }
 
@@ -158,7 +158,7 @@ if ((ballX == 0) && (ballChangeX == 0))
       {
         ballChangeY = random(-1, 2);
       }                               //mix it up a bit
-      speakerTone = ball_paddle_tone; //hit bat
+      serve_tone; //hit bat
     }
   }
   if (ballX == 1)
@@ -171,7 +171,7 @@ if ((ballX == 0) && (ballChangeX == 0))
       {
         ballChangeY = random(-1, 2);
       }                               //mix it up a bit
-      speakerTone = ball_paddle_tone; //hit bat
+     serve_tone; //hit bat
     }
   }
 
@@ -200,13 +200,13 @@ if ((ballX == 0) && (ballChangeX == 0))
   {
     ballY = 220;
     ballChangeY = -1;
-    speakerTone = ball_wall_tone;
+    ball_wall_tone;
   } //hit top wall
   if (ballY < 20)
   {
     ballY = 20;
     ballChangeY = 1;
-    speakerTone = ball_wall_tone;
+    ball_wall_tone;
   } //hit bottom wall
 
     ///////////////////////////////ball////////////////////////////////////
