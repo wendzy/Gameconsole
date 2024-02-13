@@ -119,18 +119,6 @@ if ((ballX == 0) && (ballChangeX == 0))
     } //serve
   }
 
-    if (playerOneScore == 7)
-    {
-      playerOneVictory();
-    } //P2 has missed, P1 wins
-
-    if (playerTwoScore == 7)
-    {
-      playerTwoVictory();
-    }
-    //P1 has missed, P2 wins
-
-
 //ball position, courts
   if (ballX == 29)
   { //ball is in player 2's court
