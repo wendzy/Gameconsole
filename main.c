@@ -88,11 +88,11 @@ int main(void)
 ///////////////////////////////audio////////////////////////////////////
 //audio put in the function of ball paddle and ball later
     //wall sound (play when ball touch the wall)
-    playSound(16,226);
+   ball_wall_tone = playSound(16,226);
     //paddle sound (play when ball touch the paddle)
-    playSound(96,459);
+    serve_tone = playSound(96,459);
     //point sound
-    playSound(257,490);
+    point_tone = playSound(257,490);
 ///////////////////////////////audio////////////////////////////////////
 
 
@@ -231,7 +231,7 @@ drawPaddle(p2x,p2y,batsize);
         if (pos_ball <  p1_bounds || pos_ball > p2_bounds)
         {
 //point sound
-            playSound(257,490);
+           point_tone;
             updateScore(pos_ball,&score_p1,&score_p2);
         }
         //display the winner
