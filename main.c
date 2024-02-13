@@ -70,7 +70,6 @@ int main(void)
   int ballY = 0;
   int ballChangeX = 0;
   int ballChangeY = 0;
-  int speakerTone = 0;
   ///////////////////////////////ball////////////////////////////////////
  
  
@@ -120,31 +119,16 @@ if ((ballX == 0) && (ballChangeX == 0))
     } //serve
   }
 
-
-//player scoring
-  ballX = ballX + ballChangeX;
-  if (ballX > 300)
-  {
-    ballX = 0;
-    ballChangeX = 0;
-    ballChangeY = 0;
-    playerOneScore = playerOneScore + 1;
     if (playerOneScore == 7)
     {
       playerOneVictory();
-    }
-  } //P2 has missed, P1 wins
-  if (ballX < 20)
-  {
-    ballX = 30;
-    ballChangeX = 0;
-    ballChangeY = 0;
-    playerTwoScore = playerTwoScore + 1;
+    } //P2 has missed, P1 wins
+
     if (playerTwoScore == 7)
     {
       playerTwoVictory();
     }
-  } //P1 has missed, P2 wins
+    //P1 has missed, P2 wins
 
 
 //ball position, courts
@@ -226,13 +210,13 @@ drawPaddle(p2x,p2y,batsize);
 
 //display score
         displayScore(score_p1, score_p2);
-        int pos_ball = ;
         //update score
+        ballX = ballX + ballChangeX;
         if (pos_ball <  p1_bounds || pos_ball > p2_bounds)
         {
 //point sound
            point_tone;
-            updateScore(pos_ball,&score_p1,&score_p2);
+           updateScore(ballX,&score_p1,&score_p2,ballChangeX,ballChangeY);
         }
         //display the winner
         int winner = winCon(score_p1,score_p2,max_score);
@@ -318,9 +302,9 @@ void displayScore( int score_p1, int score_p2) {
 }
 
 // update score
-void updateScore(int pos_ball,int *score_p1,int *score_p2,int ballX, int ballChangeX, int ballChangeY) {
+void updateScore(int pos_ball,int *score_p1,int *score_p2, int ballChangeX, int ballChangeY) {
     if (pos_ball < p1_bounds){
-        ballX = 0;
+        pos_ball = 0;
         ballChangeX = 0;
         ballChangeY = 0;
         (*score_p1) ++;
