@@ -73,13 +73,13 @@ int main(void)
  
  
   ///////////////////////////////score////////////////////////////////////
-    uint16_t score_p1 = 0;
-    uint16_t score_p2 = 0;
-    uint16_t max_score = 10;
+    int score_p1 = 0;
+    int score_p2 = 0;
+    int max_score = 10;
     // maximun bound for player1
-    uint16_t p1_bounds =;
+    int p1_bounds = 320;
     // maximun bound for player2
-    uint16_t p2_bounds =;
+    int p2_bounds = 0;
 ///////////////////////////////score////////////////////////////////////
   
 ///////////////////////////////audio////////////////////////////////////
@@ -92,51 +92,43 @@ int main(void)
     point_tone = playSound(257,490);
 ///////////////////////////////audio////////////////////////////////////
 
+ili9341_drawline(0,0,320,220,ili9341_color_white)
 
 
 while (1) 
   {
 ///////////////////////////////ball////////////////////////////////////
-//ball hitting bat
+//game start serve
 if ((ballX == 0) && (ballChangeX == 0))
   {
-    if (ballY = p1y + batsize / 2 - 1)
+    if () //analog input
     {
       ballChangeX = 1;
       ballChangeY = 0;
       serve_tone;
     } //serve
   }
-  if ((ballX == 300) && (ballChangeX == 0))
-  {
-    if (ballY = p2y + batsize / 2 - 1)
-    {
-      ballChangeX = -1;
-      ballChangeY = 0;
-      serve_tone;
-    } //serve
-  }
 
-//ball position, courts
-  if (ballX == 29)
+//ball position, courts hitting the bat
+  if (ballX == 300)
   { //ball is in player 2's court
-    if (abs(ballY - p2 - 1) < 3)
+    if (abs(ballY - p2y - 1) < 3)
     {                               //ball is within p2's bat
       ballChangeX = -1;             //goes back left
-      ballChangeY = ballY - p2 - 1; //change ball angle
+      ballChangeY = ballY - p2y - 1; //change ball angle
       if (ballChangeY == 0)
       {
         ballChangeY = random(-1, 2);
       }                               //mix it up a bit
       serve_tone; //hit bat
     }
-  }
+  
   if (ballX == 1)
   { //ball is in player 1's court
-    if (abs(ballY - p1 - 1) < 3)
+    if (abs(ballY - p1y - 1) < 3)
     {                               //ball is within p1's bat
       ballChangeX = 1;              //goes back right
-      ballChangeY = ballY - p1 - 1; //change ball angle
+      ballChangeY = ballY - p1y - 1; //change ball angle
       if (ballChangeY == 0)
       {
         ballChangeY = random(-1, 2);
@@ -146,6 +138,7 @@ if ((ballX == 0) && (ballChangeX == 0))
   }
 
 
+    
   int ballChangeYtemp; //to work out half steps
   if (ballX & 1)
   { //on odd steps, only step if 2
@@ -157,6 +150,7 @@ if ((ballX == 0) && (ballChangeX == 0))
     if (ballChangeY > 0)
     {
       ballChangeYtemp = 1;
+      
     }
     if (ballChangeY < 0)
     {
@@ -172,9 +166,9 @@ if ((ballX == 0) && (ballChangeX == 0))
     ballChangeY = -1;
     ball_wall_tone;
   } //hit top wall
-  if (ballY < 20)
+  if (ballY < 0)
   {
-    ballY = 20;
+    ballY = 0;
     ballChangeY = 1;
     ball_wall_tone;
   } //hit bottom wall
@@ -198,7 +192,7 @@ drawPaddle(p2x,p2y,batsize);
         displayScore(score_p1, score_p2);
         //update score
         ballX = ballX + ballChangeX;
-        if (pos_ball <  p1_bounds || pos_ball > p2_bounds)
+        if (ballX <  p1_bounds || ballX > p2_bounds)
         {
 //point sound
            point_tone;
@@ -211,10 +205,12 @@ drawPaddle(p2x,p2y,batsize);
             if (winner == 1)
             {
                 printf("Player 1 wins! \n");
+                //set position
             }
             else 
             {
                 printf("Player 2 wins! \n");
+               //set position
             }
         break;
         }
