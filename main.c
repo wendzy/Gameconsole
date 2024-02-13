@@ -318,12 +318,18 @@ void displayScore( int score_p1, int score_p2) {
 }
 
 // update score
-void updateScore(int pos_ball,int *score_p1,int *score_p2) {
+void updateScore(int pos_ball,int *score_p1,int *score_p2,int ballX, int ballChangeX, int ballChangeY) {
     if (pos_ball < p1_bounds){
+        ballX = 0;
+        ballChangeX = 0;
+        ballChangeY = 0;
         (*score_p1) ++;
     }
     else if (pos_ball > p2_bounds)
     {
+        ballX = 30;
+        ballChangeX = 0;
+        ballChangeY = 0;
         (*score_p2) ++;
     }
     
