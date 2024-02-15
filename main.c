@@ -255,6 +255,7 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
     //check if ball hit wall
     if (*ballY <= 0 || *ballY + ballSize >=  220)
     {
+       ball_wall_tone;
         *ballChangeY = -(*ballChangeY);
     }
     
@@ -265,25 +266,30 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
         {
             if (*ballX >= p1y - ballSize && ballY <= p1y +batsize)
             {
+                serve_tone;
                 *ballChangeX = -(*ballChangeX);
-                *Speed += 1; 
+                *Speed += 1;
             }
         }
         else if(*ballY >= p2y - ballSize && *ballY <= p2y + batsize)
         {
+            serve_tone;
             *ballChangeX = -(*ballChangeX);
-                *Speed += 1; 
+             *Speed += 1; 
         }
     }
     
     //Check if ball is out of bound
     if (*ballX <= 0){
+        point_tone;
         *ballX = 330/2 - ballSize/2;
         *ballY = 220/2 - ballSize/2;
         *ballChangeX = -(*ballChangeX);
         *Speed = 1;
+        
     } else if (*ballX + ballSize >= 330)
     {
+         point_tone;
         *ballX = 330/2 - ballSize/2;
         *ballY = 220/2 - ballSize/2;
         *ballChangeX = -(*ballChangeX);
