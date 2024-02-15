@@ -95,11 +95,11 @@ int main(void)
 ///////////////////////////////audio////////////////////////////////////
 //audio put in the function of ball paddle and ball later
     //wall sound (play when ball touch the wall)
-   ball_wall_tone = playSound(16,226);
+    playSound(16,226);
     //paddle sound (play when ball touch the paddle)
-    serve_tone = playSound(96,459);
+    playSound(96,459);
     //point sound
-    point_tone = playSound(257,490);
+    playSound(257,490);
 ///////////////////////////////audio////////////////////////////////////
 
 ili9341_drawline(0,0,320,220,ILI9341_COLOR_WHITE);
@@ -111,14 +111,14 @@ while (1)
 //game start serve
 if ((ballX == 0) && (ballChangeX == 0))
   {
-    if (bit_is_clear(SERVE_PIN,0)) //analog input
+    if (bit_is_clear(PIND,0)) //analog input
     {
       ballChangeX = 1;
       ballChangeY = 0;
       playSound(96,459);
     } //serve
 
-     if (bit_is_clear(SERVE2_PIN,1)) //analog input
+     if (bit_is_clear(PIND,1)) //analog input
     {
       ballChangeX = -1;
       ballChangeY = 0;
@@ -135,7 +135,7 @@ if ((ballX == 0) && (ballChangeX == 0))
       ballChangeY = ballY - p2y - 1; //change ball angle
       if (ballChangeY == 0)
       {
-        ballChangeY = random(-1, 2);
+        ballChangeY = rand(-1, 2);
       }                               //mix it up a bit
       playSound(96,459); //hit bat
     }
@@ -148,33 +148,11 @@ if ((ballX == 0) && (ballChangeX == 0))
       ballChangeY = ballY - p1y - 1; //change ball angle
       if (ballChangeY == 0)
       {
-        ballChangeY = random(-1, 2);
+        ballChangeY = rand(-1, 2);
       }                               //mix it up a bit
      playSound(96,459); //hit bat
     }
   }
-
-
-    
-  int ballChangeYtemp; //to work out half steps
-  if (ballX & 1)
-  { //on odd steps, only step if 2
-    ballChangeYtemp = ballChangeY / 2;
-  }
-  else
-  { //on even steps, step if 1 or 2
-    ballChangeYtemp = 0;
-    if (ballChangeY > 0)
-    {
-      ballChangeYtemp = 1;
-      
-    }
-    if (ballChangeY < 0)
-    {
-      ballChangeYtemp = -1;
-    }
-  }
-  ballY = ballY + ballChangeYtemp;
 
   //ball hitting top/bottom walls
   if (ballY > 220)
@@ -248,11 +226,11 @@ void drawBall(int x, int y)
 void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed) 
 {
 
-    ballSize = 8;
-    margin = 5;
+    int ballSize = 8;
+    int margin = 5;
     //Update ball position with increasing of speed
-    *ballX += *balllChangeX * (*Speed);
-    *ballY += *balllChangeY * (*Speed);
+    *ballX += *ballChangeX * (*Speed);
+    *ballY += *ballChangeY * (*Speed);
 
     //check if ball hit wall
     if (*ballY <= 0 || *ballY + ballSize >=  220)
@@ -268,14 +246,14 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
         {
             if (*ballX >= p1y - ballSize && ballY <= p1y +batsize)
             {
-                serve_tone;
+                playSound(96,459);
                 *ballChangeX = -(*ballChangeX);
                 *Speed += 1;
             }
         }
         else if(*ballY >= p2y - ballSize && *ballY <= p2y + batsize)
         {
-            serve_tone;
+            playSound(96,459);
             *ballChangeX = -(*ballChangeX);
              *Speed += 1; 
         }
@@ -283,7 +261,7 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
     
     //Check if ball is out of bound
     if (*ballX <= 0){
-        point_tone;
+        playSound(257,490);
         *ballX = 330/2 - ballSize/2;
         *ballY = 220/2 - ballSize/2;
         *ballChangeX = -(*ballChangeX);
@@ -291,7 +269,7 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
         
     } else if (*ballX + ballSize >= 330)
     {
-         point_tone;
+        playSound(257,490);
         *ballX = 330/2 - ballSize/2;
         *ballY = 220/2 - ballSize/2;
         *ballChangeX = -(*ballChangeX);
