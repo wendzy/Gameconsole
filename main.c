@@ -46,7 +46,8 @@ int main(void)
   int p1y = 0;
   int p2y = 0;
   int batsize = 50;
-  Speed = 1;
+  int Speed = 1;
+  int boarder_h = 240;
 
   // GPIO pins init
   //player 1
@@ -267,10 +268,10 @@ void p2_pos()
 
   //check pos limit
   int check_p(int x){
-  if (x > boarder height) {
-  x = boarder height;
+  if (x > boarder_h) {
+  x = boarder_h;
   }
-  else if (x < boarder height){
+  else if (x < boarder_h){
   x = 0 + batsize;
   }
   else{
