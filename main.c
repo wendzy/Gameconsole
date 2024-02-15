@@ -41,11 +41,12 @@ int main(void)
 ///////////////////////////////Paddle////////////////////////////////////
   //paddle init 
   //variable for p1 and p2 position
-  uint16_t p1x = 5;
-  uint16_t p2x = 315;
-  uint16_t p1y = 0;
-  uint16_t p2y = 0;
-  uint16_t batsize = 50;
+  int p1x = 5;
+  int p2x = 315;
+  int p1y = 0;
+  int p2y = 0;
+  int batsize = 50;
+  Speed = 1;
 
   // GPIO pins init
   //player 1
@@ -125,7 +126,7 @@ if ((ballX == 0) && (ballChangeX == 0))
       playSound(96,459);
     } //serve
     
- updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed);
+ updateBallPosition (batsize,ballX, ballY, ballChangeX, ballChangeY, p1y, p2y, Speed);
 
 
     ///////////////////////////////ball////////////////////////////////////
@@ -183,7 +184,7 @@ void drawBall(int x, int y)
     ili9341_fillrect(x,y,8,8,ILI9341_COLOR_WHITE);
 }
 
-void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed) 
+void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, int p1y, int p2y, int *Speed) 
 {
 
     int ballSize = 8;
