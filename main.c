@@ -124,49 +124,9 @@ if ((ballX == 0) && (ballChangeX == 0))
       ballChangeY = 0;
       playSound(96,459);
     } //serve
+    
+ updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed);
 
-
-//ball position, courts hitting the bat
-  if (ballX == 300)
-  { //ball is in player 2's court
-    if (abs(ballY - p2y - 1) < 3)
-    {                               //ball is within p2's bat
-      ballChangeX = -1;             //goes back left
-      ballChangeY = ballY - p2y - 1; //change ball angle
-      if (ballChangeY == 0)
-      {
-        ballChangeY = rand(-1, 2);
-      }                               //mix it up a bit
-      playSound(96,459); //hit bat
-    }
-  }
-  if (ballX == 1)
-  { //ball is in player 1's court
-    if (abs(ballY - p1y - 1) < 3)
-    {                               //ball is within p1's bat
-      ballChangeX = 1;              //goes back right
-      ballChangeY = ballY - p1y - 1; //change ball angle
-      if (ballChangeY == 0)
-      {
-        ballChangeY = rand(-1, 2);
-      }                               //mix it up a bit
-     playSound(96,459); //hit bat
-    }
-  }
-
-  //ball hitting top/bottom walls
-  if (ballY > 220)
-  {
-    ballY = 220;
-    ballChangeY = -1;
-    playSound(16,226);
-  } //hit top wall
-  if (ballY < 0)
-  {
-    ballY = 0;
-    ballChangeY = 1;
-    playSound(16,226);
-  } //hit bottom wall
 
     ///////////////////////////////ball////////////////////////////////////
 
