@@ -129,7 +129,7 @@ if ((ballX == 0) && (ballChangeX == 0))
 //ball position, courts hitting the bat
   if (ballX == 300)
   { //ball is in player 2's court
-    if (abs(ballY - p2y - 1) < )
+    if (abs(ballY - p2y - 1) < 3)
     {                               //ball is within p2's bat
       ballChangeX = -1;             //goes back left
       ballChangeY = ballY - p2y - 1; //change ball angle
@@ -139,7 +139,7 @@ if ((ballX == 0) && (ballChangeX == 0))
       }                               //mix it up a bit
       playSound(96,459); //hit bat
     }
-  
+  }
   if (ballX == 1)
   { //ball is in player 1's court
     if (abs(ballY - p1y - 1) < 3)
