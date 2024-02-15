@@ -32,9 +32,9 @@ void drawBall(int x, int y);
 ///////////////////////////////Paddle////////////////////////////////////
 ///////////////////////////////audio////////////////////////////////////
 // audio function
-void playSound(float duration, float frequency)
+void playSound(float duration, float frequency);
 ///////////////////////////////audio////////////////////////////////////
-void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed)
+void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed);
 
 int main(void)
 {
@@ -102,7 +102,7 @@ int main(void)
     point_tone = playSound(257,490);
 ///////////////////////////////audio////////////////////////////////////
 
-ili9341_drawline(0,0,320,220,ILI9341_COLOR_WHITE)
+ili9341_drawline(0,0,320,220,ILI9341_COLOR_WHITE);
 
 
 while (1) 
@@ -115,14 +115,14 @@ if ((ballX == 0) && (ballChangeX == 0))
     {
       ballChangeX = 1;
       ballChangeY = 0;
-      serve_tone;
+      playSound(96,459);
     } //serve
 
      if (bit_is_clear(SERVE2_PIN,1)) //analog input
     {
       ballChangeX = -1;
       ballChangeY = 0;
-      serve_tone;
+      playSound(96,459);
     } //serve
 
 
@@ -137,7 +137,7 @@ if ((ballX == 0) && (ballChangeX == 0))
       {
         ballChangeY = random(-1, 2);
       }                               //mix it up a bit
-      serve_tone; //hit bat
+      playSound(96,459); //hit bat
     }
   
   if (ballX == 1)
@@ -150,7 +150,7 @@ if ((ballX == 0) && (ballChangeX == 0))
       {
         ballChangeY = random(-1, 2);
       }                               //mix it up a bit
-     serve_tone; //hit bat
+     playSound(96,459); //hit bat
     }
   }
 
@@ -181,13 +181,13 @@ if ((ballX == 0) && (ballChangeX == 0))
   {
     ballY = 220;
     ballChangeY = -1;
-    ball_wall_tone;
+    playSound(16,226);
   } //hit top wall
   if (ballY < 0)
   {
     ballY = 0;
     ballChangeY = 1;
-    ball_wall_tone;
+    playSound(16,226);
   } //hit bottom wall
 
     ///////////////////////////////ball////////////////////////////////////
@@ -255,7 +255,7 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
     //check if ball hit wall
     if (*ballY <= 0 || *ballY + ballSize >=  220)
     {
-       ball_wall_tone;
+       playSound(16,226);
         *ballChangeY = -(*ballChangeY);
     }
     
