@@ -97,11 +97,11 @@ int main(void)
 ///////////////////////////////audio////////////////////////////////////
 //audio put in the function of ball paddle and ball later
     //wall sound (play when ball touch the wall)
-    playSound(16,226);
+#define wall_tone playSound(16,226);
     //paddle sound (play when ball touch the paddle)
-    playSound(96,459);
+#define paddle_tone playSound(96,459);
     //point sound
-    playSound(257,490);
+#define point_tone playSound(257,490);
 ///////////////////////////////audio////////////////////////////////////
 
 ili9341_drawline(0,0,320,220,ILI9341_COLOR_WHITE);
@@ -117,14 +117,14 @@ if ((ballX == 0) && (ballChangeX == 0))
     {
       ballChangeX = 1;
       ballChangeY = 0;
-      playSound(96,459);
+      paddle_tone;
     } //serve
 
      if (bit_is_clear(PIND,1)) //analog input
     {
       ballChangeX = -1;
       ballChangeY = 0;
-      playSound(96,459);
+      paddle_tone;
     } //serve
     
  updateBallPosition (batsize,ballX, ballY, ballChangeX, ballChangeY, p1y, p2y, Speed);
@@ -202,36 +202,37 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
     }
     
 
-    if (*ballX <= margin + ballSize && ballChangeX < 0) || (*ballX + ballSize >= 330 - margin && *ballChangeX >0)) 
+    if (*ballX <= margin + ballSize && ballChangeX < 0) || (*ballX + ballSize >= 330 - margin && *ballChangeX >0) 
     {
         if(*ballX <= margin + ballSize && ballChangeX < 0)
         {
             if (*ballX >= p1y - ballSize && ballY <= p1y +batsize)
             {
-                playSound(96,459);
+                paddle_tone;
                 *ballChangeX = -(*ballChangeX);
                 *Speed += 1;
             }
         }
         else if(*ballY >= p2y - ballSize && *ballY <= p2y + batsize)
         {
-            playSound(96,459);
+            paddle_tone;
             *ballChangeX = -(*ballChangeX);
              *Speed += 1; 
         }
     }
     
     //Check if ball is out of bound
-    if (*ballX <= 0){
-        playSound(257,490);
+    if (*ballX <= 0)
+    {
+        point_tone;
         *ballX = 330/2 - ballSize/2;
         *ballY = 220/2 - ballSize/2;
         *ballChangeX = -(*ballChangeX);
         *Speed = 1;
-        
-    } else if (*ballX + ballSize >= 330)
+    } 
+    else if(*ballX + ballSize >= 330)
     {
-        playSound(257,490);
+        point_tone;
         *ballX = 330/2 - ballSize/2;
         *ballY = 220/2 - ballSize/2;
         *ballChangeX = -(*ballChangeX);
