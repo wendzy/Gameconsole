@@ -34,7 +34,7 @@ void drawBall(int x, int y);
 // audio function
 void playSound(float duration, float frequency)
 ///////////////////////////////audio////////////////////////////////////
-
+void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed)
 
 int main(void)
 {
@@ -242,6 +242,54 @@ void drawBall(int x, int y)
 { //draw 2x2 ball at x,y
 
     ili9341_fillrect(x,y,8,8,ILI9341_COLOR_WHITE);
+}
+
+void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed) {
+
+    ballSize = 8;
+    margin = 5;
+    //Update ball position with increasing of speed
+    *ballX += *balllChangeX * (*Speed);
+    *ballY += *balllChangeY * (*Speed);
+
+    //check if ball hit wall
+    if (*ballY <= 0 || *ballY + ballSize >=  220)
+    {
+        *ballChangeY = -(*ballChangeY);
+    }
+    
+
+    if (*ballX <= margin + ballSize && ballChangeX < 0) || (*ballX + ballSize >= 330 - margin && *ballChangeX >0)) 
+    {
+        if(*ballX <= margin + ballSize && ballChangeX < 0)
+        {
+            if (*ballX >= p1y - ballSize && ballY <= p1y +batsize)
+            {
+                *ballChangeX = -(*ballChangeX);
+                *Speed += 1; 
+            }
+        }
+        else if(*ballY >= p2y - ballSize && *ballY <= p2y + batsize)
+        {
+            *ballChangeX = -(*ballChangeX);
+                *Speed += 1; 
+        }
+    }
+    
+    //Check if ball is out of bound
+    if (*ballX <= 0){
+        *ballX = 330/2 - ballSize/2;
+        *ballY = 220/2 - ballSize/2;
+        *ballChangeX = -(*ballChangeX);
+        *Speed = 1;
+    } else if (*ballX + ballSize >= 330)
+    {
+        *ballX = 330/2 - ballSize/2;
+        *ballY = 220/2 - ballSize/2;
+        *ballChangeX = -(*ballChangeX);
+        *Speed = 1;
+    }
+
 }
 ///////////////////////////////ball////////////////////////////////////
 ///////////////////////////////Paddle////////////////////////////////////
