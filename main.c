@@ -24,9 +24,9 @@ void updateScore(int pos_ball,int *score_p1, int *score_p2);
 int winCon(int score_p1, int score_p2, int max_score);
 ///////////////////////////////score////////////////////////////////////
 ///////////////////////////////Paddle//////////////////////////////////// 
-void p1_pos();
-void p2_pos();
-int check_p(int x);
+void p1_pos(int p);
+void p2_pos(int p);
+int check_p(int x, int b);
 void drawPaddle(int x, int y, int s);
 void drawBall(int x, int y);
 ///////////////////////////////Paddle////////////////////////////////////
@@ -134,10 +134,10 @@ if ((ballX == 0) && (ballChangeX == 0))
 
   ///////////////////////////////Paddle////////////////////////////////////
 //check if paddle pos over boarder
-p1_pos();
-p2_pos();
-p1y = check_p(p1y);
-p2y = check_p(p2y);
+p1_pos(p1y);
+p2_pos(p2y);
+p1y = check_p(p1y,batsize,boarder_h);
+p2y = check_p(p2y,batsize,boarder_h);
 //draw paddle
 drawPaddle(p1x,p1y,batsize);
 drawPaddle(p2x,p2y,batsize);
@@ -242,11 +242,11 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
 ///////////////////////////////ball////////////////////////////////////
 ///////////////////////////////Paddle////////////////////////////////////
   //paddle update position
-void p1_pos() 
+void p1_pos(int p) 
 {
   if (bit_is_clear(PINC, 4)) //if button is pressed, check low
   { // shift up
-    p1y += 1;
+    p += 1;
   }
   else if (bit_is_clear(PINC, 5))
   { // shift down
@@ -254,25 +254,25 @@ void p1_pos()
   }
 }
 
-void p2_pos() 
+void p2_pos(int p) 
 {
   if (bit_is_clear(PINB, 3)) //if button is pressed, check low
   { // shift up
-    p2y += 1;
+    p += 1;
   }
   else if (bit_is_clear(PINB, 4))
   { // shift down
-    p2y -= 1;
+    p -= 1;
   }
 }
 
   //check pos limit
-  int check_p(int x){
-  if (x > boarder_h) {
-  x = boarder_h;
+  int check_p(int x, int bz, int bh){
+  if (x > bh) {
+  x = bh;
   }
-  else if (x < boarder_h){
-  x = 0 + batsize;
+  else if (x < bh){
+  x = 0 + bz;
   }
   else{
 }
