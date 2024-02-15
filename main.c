@@ -102,7 +102,7 @@ int main(void)
     point_tone = playSound(257,490);
 ///////////////////////////////audio////////////////////////////////////
 
-ili9341_drawline(0,0,320,220,ili9341_color_white)
+ili9341_drawline(0,0,320,220,ILI9341_COLOR_WHITE)
 
 
 while (1) 
