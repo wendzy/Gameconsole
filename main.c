@@ -106,7 +106,7 @@ ili9341_drawline(0,0,320,220,ILI9341_COLOR_WHITE);
 
 
 while (1) 
-  {
+{
 ///////////////////////////////ball////////////////////////////////////
 //game start serve
 if ((ballX == 0) && (ballChangeX == 0))
@@ -236,6 +236,7 @@ drawPaddle(p2x,p2y,batsize);
 }
  
   }
+}  
 ///////////////////////////////ball////////////////////////////////////
 
 void drawBall(int x, int y)
@@ -244,7 +245,8 @@ void drawBall(int x, int y)
     ili9341_fillrect(x,y,8,8,ILI9341_COLOR_WHITE);
 }
 
-void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed) {
+void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed) 
+{
 
     ballSize = 8;
     margin = 5;
@@ -300,7 +302,8 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
 ///////////////////////////////ball////////////////////////////////////
 ///////////////////////////////Paddle////////////////////////////////////
   //paddle update position
-  void p1_pos() {
+void p1_pos() 
+{
   if (bit_is_clear(PINC, 4)) //if button is pressed, check low
   { // shift up
     p1y += 1;
@@ -309,9 +312,10 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
   { // shift down
     p1y -= 1;
   }
+}
 
-  }
-   void p2_pos() {
+void p2_pos() 
+{
   if (bit_is_clear(PINB, 3)) //if button is pressed, check low
   { // shift up
     p2y += 1;
@@ -320,7 +324,7 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
   { // shift down
     p2y -= 1;
   }
-  }
+}
 
   //check pos limit
   int check_p(int x){
@@ -349,13 +353,15 @@ void drawPaddle(int x, int y, int s)
 ///////////////////////////////score////////////////////////////////////
 //function for score
 //display score
-void displayScore( int score_p1, int score_p2) {
+void displayScore( int score_p1, int score_p2) 
+{
   //give position to score board
     printf("Player 1: %d | Player 2: %d\n", score_p1,score_p2);
 }
 
 // update score
-void updateScore(int pos_ball,int *score_p1,int *score_p2, int ballChangeX, int ballChangeY) {
+void updateScore(int pos_ball,int *score_p1,int *score_p2, int ballChangeX, int ballChangeY) 
+{
     if (pos_ball < p1_bounds){
         pos_ball = 0;
         ballChangeX = 0;
@@ -384,7 +390,8 @@ int winCon(int score_p1,int score_p2, int max_score){
 }
 ///////////////////////////////score////////////////////////////////////
 ///////////////////////////////audio////////////////////////////////////
-void playSound(float duration, float frequency){
+void playSound(float duration, float frequency)
+{
     long int i,cycles;
     float half_period;
     float wavelength;
@@ -405,6 +412,5 @@ void playSound(float duration, float frequency){
     }
 
     return;
-
 }
 ///////////////////////////////audio////////////////////////////////////
