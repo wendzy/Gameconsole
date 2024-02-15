@@ -24,8 +24,8 @@ void updateScore(int pos_ball,int *score_p1, int *score_p2);
 int winCon(int score_p1, int score_p2, int max_score);
 ///////////////////////////////score////////////////////////////////////
 ///////////////////////////////Paddle//////////////////////////////////// 
-void p1_pos();
-void p2_pos();
+void p1_pos(int p1y);
+void p2_pos(int p2y);
 int check_p(int x);
 void drawPaddle(int x, int y, int s);
 void drawBall(int x, int y);
@@ -34,6 +34,10 @@ void drawBall(int x, int y);
 // audio function
 void playSound(float duration, float frequency)
 ///////////////////////////////audio////////////////////////////////////
+
+
+int main(void)
+{
 ///////////////////////////////Paddle////////////////////////////////////
   //paddle init 
   //variable for p1 and p2 position
@@ -45,15 +49,14 @@ void playSound(float duration, float frequency)
 
   // GPIO pins init
   //player 1
-  DDRC &= ~(1 << PINC4) | (1 << PINC5); // set pin as input
+  DDRC &= ~(1 << PINC4) | ~(1 << PINC5); // set pin as input
   PORTC |= (1 << PINC4)| (1 << PINC5); //set pin as high 
   //player 2
-  DDRD &= ~(1 << PIND3) | (1 << PIND4); // set pin as input
+  DDRD &= ~(1 << PIND3) | ~(1 << PIND4); // set pin as input
   PORTD |= (1 << PIND3)| (1 << PIND4); //set pin as high 
 
+///////////////////////////////Paddle////////////////////////////////////
 
-int main(void)
-{
   PORTD |= 0b0000011;
   DDRC |= (1 << PINC5);
   DDRC &= ~(1 << PINC4); //set pin as input
@@ -191,8 +194,8 @@ if ((ballX == 0) && (ballChangeX == 0))
 
   ///////////////////////////////Paddle////////////////////////////////////
 //check if paddle pos over boarder
-p1y = p1_pos();
-p2y = p2_pos();
+p1_pos(p1y);
+p2_pos(p2y);
 p1y = check_p(p1y);
 p2y = check_p(p2y);
 //draw paddle
@@ -243,7 +246,7 @@ void drawBall(int x, int y)
 ///////////////////////////////ball////////////////////////////////////
 ///////////////////////////////Paddle////////////////////////////////////
   //paddle update position
-  void p1_pos() {
+  void p1_pos(int p1y) {
   if (bit_is_clear(PINC, 4)) //if button is pressed, check low
   { // shift up
     p1y += 1;
@@ -254,12 +257,12 @@ void drawBall(int x, int y)
   }
 
   }
-   void p2_pos() {
+   void p2_pos(int p2y) {
   if (bit_is_clear(PINB, 3)) //if button is pressed, check low
   { // shift up
     p2y += 1;
   }
-  else if (bit_is_clear(PINB, 3))
+  else if (bit_is_clear(PINB, 4))
   { // shift down
     p2y -= 1;
   }
