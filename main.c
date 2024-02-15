@@ -26,7 +26,7 @@ int winCon(int score_p1, int score_p2, int max_score);
 ///////////////////////////////Paddle//////////////////////////////////// 
 void p1_pos(int p);
 void p2_pos(int p);
-int check_p(int x, int b);
+int check_p(int x, int bz, int bh);
 void drawPaddle(int x, int y, int s);
 void drawBall(int x, int y);
 ///////////////////////////////Paddle////////////////////////////////////
@@ -250,7 +250,7 @@ void p1_pos(int p)
   }
   else if (bit_is_clear(PINC, 5))
   { // shift down
-    p1y -= 1;
+    p -= 1;
   }
 }
 
