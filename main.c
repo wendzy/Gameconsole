@@ -24,8 +24,8 @@ void updateScore(int pos_ball,int *score_p1, int *score_p2);
 int winCon(int score_p1, int score_p2, int max_score);
 ///////////////////////////////score////////////////////////////////////
 ///////////////////////////////Paddle//////////////////////////////////// 
-void p1_pos(int p);
-void p2_pos(int p);
+void p1_pos(int p, int ps);
+void p2_pos(int p, int ps);
 int check_p(int x, int bz, int bh);
 void drawPaddle(int x, int y, int s);
 void drawBall(int x, int y);
@@ -48,7 +48,7 @@ int main(void)
   int batsize = 50;
   int Speed = 1;
   int boarder_h = 240;
-
+  int paddlespeed = 5;
   // GPIO pins init
   //player 1
   DDRC &= ~(1 << PINC4) | ~(1 << PINC5); // set pin as input
@@ -134,8 +134,8 @@ if ((ballX == 0) && (ballChangeX == 0))
 
   ///////////////////////////////Paddle////////////////////////////////////
 //check if paddle pos over boarder
-p1_pos(p1y);
-p2_pos(p2y);
+p1_pos(p1y,paddlespeed);
+p2_pos(p2y,paddlespeed);
 p1y = check_p(p1y,batsize,boarder_h);
 p2y = check_p(p2y,batsize,boarder_h);
 //draw paddle
@@ -243,27 +243,27 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
 ///////////////////////////////ball////////////////////////////////////
 ///////////////////////////////Paddle////////////////////////////////////
   //paddle update position
-void p1_pos(int p) 
+void p1_pos(int p,int ps) 
 {
   if (bit_is_clear(PINC, 4)) //if button is pressed, check low
   { // shift up
-    p += 1;
+    p += ps;
   }
   else if (bit_is_clear(PINC, 5))
   { // shift down
-    p -= 1;
+    p -= ps;
   }
 }
 
-void p2_pos(int p) 
+void p2_pos(int p,int ps) 
 {
   if (bit_is_clear(PINB, 3)) //if button is pressed, check low
   { // shift up
-    p += 1;
+    p += ps;
   }
   else if (bit_is_clear(PINB, 4))
   { // shift down
-    p -= 1;
+    p -= ps;
   }
 }
 
