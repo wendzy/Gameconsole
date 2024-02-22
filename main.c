@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <inttypes.h>
 #include <ili9341.h>
+#define __DELAY_BACKWARD_COMPATIBLE__
 #define SPEAKER_PORT PORTD
 #define SPEAKER_DDR DDRD
 #define SPEAKER_PIN 2
@@ -14,13 +15,20 @@
 #define SERVE2_PORT PORTD
 #define SERVE2_DDR DDRD
 #define SERVE2_PIN 1
+//audio put in the function of ball paddle and ball later
+    //wall sound (play when ball touch the wall)
+#define wall_tone playSound(16,226);
+    //paddle sound (play when ball touch the paddle)
+#define paddle_tone playSound(96,459);
+    //point sound
+#define point_tone playSound(257,490);
 
 //function prototype
 
 ///////////////////////////////score////////////////////////////////////
 //score function
 void displayScore( int score_p1, int score_p2);
-void updateScore(int pos_ball,int *score_p1, int *score_p2);
+void updateScore(int ballX,int *score_p1, int *score_p2, int ballChangeX,int ballChangeY);
 int winCon(int score_p1, int score_p2, int max_score);
 ///////////////////////////////score////////////////////////////////////
 ///////////////////////////////Paddle//////////////////////////////////// 
@@ -34,20 +42,19 @@ void drawBall(int x, int y);
 // audio function
 void playSound(float duration, float frequency);
 ///////////////////////////////audio////////////////////////////////////
-void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, uint8_t p1y, uint8_t p2y, int *Speed);
-
+void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, int *ballChangeY, int p1y, int p2y, int *Speed);
 int main(void)
 {
 ///////////////////////////////Paddle////////////////////////////////////
   //paddle init 
   //variable for p1 and p2 position
-  int p1x = 5;
+  int p1x = 2;
   int p2x = 315;
-  int p1y = 0;
+  uint16_t p1y = 0;
   int p2y = 0;
-  int batsize = 50;
+ uint16_t batsize = 20;
   int Speed = 1;
-  int boarder_h = 240;
+  uint16_t boarder_h = 220;
   int paddlespeed = 5;
   // GPIO pins init
   //player 1
@@ -95,16 +102,7 @@ int main(void)
 ///////////////////////////////score////////////////////////////////////
   
 ///////////////////////////////audio////////////////////////////////////
-//audio put in the function of ball paddle and ball later
-    //wall sound (play when ball touch the wall)
-#define wall_tone playSound(16,226);
-    //paddle sound (play when ball touch the paddle)
-#define paddle_tone playSound(96,459);
-    //point sound
-#define point_tone playSound(257,490);
 ///////////////////////////////audio////////////////////////////////////
-
-ili9341_drawline(0,0,320,220,ILI9341_COLOR_WHITE);
 
 
 while (1) 
@@ -113,23 +111,26 @@ while (1)
 //game start serve
 if ((ballX == 0) && (ballChangeX == 0))
   {
-    if (bit_is_clear(PIND,0)) //analog input
+    if (bit_is_set(PIND,0)) //analog input
     {
       ballChangeX = 1;
       ballChangeY = 0;
       paddle_tone;
     } //serve
 
-     if (bit_is_clear(PIND,1)) //analog input
+     if (bit_is_set(PIND,1)) //analog input
     {
       ballChangeX = -1;
       ballChangeY = 0;
       paddle_tone;
     } //serve
-    
- updateBallPosition (batsize,ballX, ballY, ballChangeX, ballChangeY, p1y, p2y, Speed);
+  drawBall(8,8);
+ //updateBallPosition (batsize,ballX, ballY, ballChangeX, ballChangeY, p1y, p2y, Speed);
 
-
+  ili9341_drawline(0,0,320,0,ILI9341_COLOR_WHITE);
+  ili9341_drawline(0,0,0,320,ILI9341_COLOR_WHITE);
+   ili9341_drawline(320,0,0,0,ILI9341_COLOR_WHITE);
+  ili9341_drawline(0,320,0,0,ILI9341_COLOR_WHITE);
     ///////////////////////////////ball////////////////////////////////////
 
   ///////////////////////////////Paddle////////////////////////////////////
@@ -157,7 +158,8 @@ drawPaddle(p2x,p2y,batsize);
         }
         //display the winner
         int winner = winCon(score_p1,score_p2,max_score);
-        if (winner != 0){
+        if (winner != 0)
+        {
             printf("Game over!\n");
             if (winner == 1)
             {
@@ -173,14 +175,14 @@ drawPaddle(p2x,p2y,batsize);
         }
 ///////////////////////////////score////////////////////////////////////
     _delay_ms(100);
-}
- 
+    }
   }
-}  
+} 
 ///////////////////////////////ball////////////////////////////////////
 
 void drawBall(int x, int y)
-{ //draw 2x2 ball at x,y
+{
+   //draw 2x2 ball at x,y
 
     ili9341_fillrect(x,y,8,8,ILI9341_COLOR_WHITE);
 }
@@ -202,7 +204,7 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
     }
     
 
-    if (*ballX <= margin + ballSize && ballChangeX < 0) || (*ballX + ballSize >= 330 - margin && *ballChangeX >0) 
+    if ((*ballX <= margin + ballSize && ballChangeX < 0) || (*ballX + ballSize >= 330 - margin && *ballChangeX >0) )
     {
         if(*ballX <= margin + ballSize && ballChangeX < 0)
         {
@@ -245,11 +247,11 @@ void updateBallPosition (int *batsize,int *ballX, int *ballY, int *ballChangeX, 
   //paddle update position
 void p1_pos(int p,int ps) 
 {
-  if (bit_is_clear(PINC, 4)) //if button is pressed, check low
+  if (bit_is_set(PINC, 4)) //if button is pressed, check low
   { // shift up
     p += ps;
   }
-  else if (bit_is_clear(PINC, 5))
+  else if (bit_is_set(PINC, 5))
   { // shift down
     p -= ps;
   }
@@ -257,11 +259,11 @@ void p1_pos(int p,int ps)
 
 void p2_pos(int p,int ps) 
 {
-  if (bit_is_clear(PINB, 3)) //if button is pressed, check low
+  if (bit_is_set(PINB, 3)) //if button is pressed, check low
   { // shift up
     p += ps;
   }
-  else if (bit_is_clear(PINB, 4))
+  else if (bit_is_set(PINB, 4))
   { // shift down
     p -= ps;
   }
@@ -270,15 +272,16 @@ void p2_pos(int p,int ps)
   //check pos limit
   int check_p(int x, int bz, int bh){
   if (x > bh) {
-  x = bh;
+  x = bh-bz;
   }
   else if (x < bh){
-  x = 0 + bz;
+  x = 0;
   }
   else{
 }
     return x;
   }
+
 
 void drawPaddle(int x, int y, int s)
 { //draw paddle starting at x,y, extending s down
@@ -290,6 +293,7 @@ void drawPaddle(int x, int y, int s)
   }
 }
 
+
 ///////////////////////////////Paddle////////////////////////////////////
 ///////////////////////////////score////////////////////////////////////
 //function for score
@@ -297,19 +301,20 @@ void drawPaddle(int x, int y, int s)
 void displayScore( int score_p1, int score_p2) 
 {
   //give position to score board
-    printf("Player 1: %d | Player 2: %d\n", score_p1,score_p2);
+
+  //printf("P1 %d | P2 %d", score_p1,score_p2);
 }
 
 // update score
-void updateScore(int pos_ball,int *score_p1,int *score_p2, int ballChangeX, int ballChangeY) 
+void updateScore(int ballX,int *score_p1,int *score_p2, int ballChangeX, int ballChangeY) 
 {
-    if (pos_ball < p1_bounds){
-        pos_ball = 0;
+    if (ballX < 330){
+        ballX = 0;
         ballChangeX = 0;
         ballChangeY = 0;
         (*score_p1) ++;
     }
-    else if (pos_ball > p2_bounds)
+    else if (ballX > 0)
     {
         ballX = 30;
         ballChangeX = 0;
@@ -346,9 +351,9 @@ void playSound(float duration, float frequency)
 
     for (i=0; i<cycles;i++)
     {
-        _delay_ms(half_period);
+        _delay_ms(50);
         SPEAKER_PORT |= (1<< SPEAKER_PIN );
-        _delay_ms(half_period);
+        _delay_ms(50);
         SPEAKER_PORT |= (1<< SPEAKER_PIN );
     }
 
