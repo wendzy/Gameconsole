@@ -82,6 +82,19 @@ Position prevPlayer1Pos;
 Position prevPlayer2Pos;
 Position prevBallPos;
 
+void playSound(int frequency, int duration) {
+    // Set the PWM frequency
+    OCR1A = (F_CPU / frequency / 2) - 1;
+
+    // Play the sound for the specified duration
+    for(int i = 0; i < duration; i++) {
+        _delay_ms(1);
+    }
+
+    // Stop the sound
+    OCR1A = 0;
+}
+
 void displayTitleScreen() {
 
     ili9341_setcursor(85, 90);
