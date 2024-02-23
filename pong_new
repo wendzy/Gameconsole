@@ -1,0 +1,254 @@
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/pgmspace.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <inttypes.h>
+#include <ili9341.h>
+#include <time.h> 
+#include <unistd.h>
+
+#define PLAYER1_UP_BUTTON PINC4
+#define PLAYER1_DOWN_BUTTON PINC5
+#define PLAYER2_UP_BUTTON PIND3
+#define PLAYER2_DOWN_BUTTON PIND4
+#define BUTTON_PIN_2 PIND0
+#define BUTTON_PIN_1 PIND1
+
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 240
+#define PADDLE_WIDTH 10
+#define PADDLE_HEIGHT 60
+#define SCOREBOARD_HEIGHT 20 // Set this to the height of your scoreboard
+#define BALL_SIZE 10
+#define FIELD_TOP SCOREBOARD_HEIGHT
+#define FIELD_BOTTOM SCREEN_HEIGHT 
+#define FRAME_WIDTH 2 // Width of the frame in pixels
+#define SCOREBOARD_HEIGHT 20
+#define GAME_HEIGHT (SCREEN_HEIGHT - SCOREBOARD_HEIGHT)
+#define NET_WIDTH 2 // Width of the net in pixels
+#define NET_DASH_LENGTH 10 // Length of each dash in the net
+
+#define NET_COLOR ILI9341_COLOR_WHITE
+#define PLAYER1_COLOR ILI9341_COLOR_RED
+#define PLAYER2_COLOR ILI9341_COLOR_BLUE
+#define BALL_COLOR ILI9341_COLOR_WHITE
+#define BG_COLOR ILI9341_COLOR_BLACK
+#define SCORE_COLOR ILI9341_COLOR_WHITE
+#define FRAME_COLOR ILI9341_COLOR_WHITE
+#define INITIAL_BALL_SPEED 10
+#define SPEED_INCREMENT 2
+
+typedef struct {
+    int x, y;
+} Position;
+
+//define the paddle type
+typedef struct {
+    Position pos;
+    int dy;
+    int score;
+} Paddle;
+
+// Define the Ball type
+typedef struct {
+    Position pos;
+    int dx, dy;
+} Ball;
+
+//Define the player score type  
+typedef struct {
+    int player1;
+    int player2;
+} Score;
+
+// Define the paddles, player score and the ball
+Ball ball = {
+    .pos = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 },
+    .dx = INITIAL_BALL_SPEED,
+    .dy = INITIAL_BALL_SPEED
+};
+
+Paddle player1, player2;
+
+Score score = {
+    .player1 = 0,
+    .player2 = 0
+};
+
+
+// Previous positions
+Position prevPlayer1Pos;
+Position prevPlayer2Pos;
+Position prevBallPos;
+
+void displayTitleScreen() {
+
+    ili9341_setcursor(85, 90);
+    ili9341_settextcolor(FRAME_COLOR, BG_COLOR);
+    ili9341_settextsize(6);
+    printf("PONG");
+    ili9341_settextsize(1);
+    ili9341_setcursor(86, 140);
+    printf("Microcontroller Project");
+    _delay_ms(2000);
+    ili9341_clear(BG_COLOR); // Clear the screen
+    // Uncomment when the break line is fixed
+    // ili9341_setcursor(80, 100);
+    // ili9341_settextcolor(FRAME_COLOR, BG_COLOR);
+    // ili9341_settextsize(2);
+    // printf("Press any button");
+    // ili9341_setcursor(100, 120);
+    // printf("to start the game");
+}
+
+
+void drawFieldFrame() {
+   // Draw a frame around the field
+    ili9341_fillrect(0, FIELD_TOP, SCREEN_WIDTH, FRAME_WIDTH, FRAME_COLOR); // Top border
+    ili9341_fillrect(0, FIELD_BOTTOM - FRAME_WIDTH, SCREEN_WIDTH, FRAME_WIDTH, FRAME_COLOR); // Bottom border
+    //ili9341_fillrect(0, FIELD_TOP, FRAME_WIDTH, FIELD_BOTTOM - FIELD_TOP, FRAME_COLOR); // Left border
+    //ili9341_fillrect(SCREEN_WIDTH - FRAME_WIDTH, FIELD_TOP, FRAME_WIDTH, FIELD_BOTTOM - FIELD_TOP, FRAME_COLOR); // Right border
+}
+
+void drawNet() {
+    for (int y = FIELD_TOP + FRAME_WIDTH; y < FIELD_BOTTOM - FRAME_WIDTH; y += 2 * NET_DASH_LENGTH) {
+        ili9341_fillrect(SCREEN_WIDTH / 2 - NET_WIDTH / 2, y, NET_WIDTH, NET_DASH_LENGTH, NET_COLOR);
+    }
+}
+
+
+void setup() {
+    // Initialize the display
+    ili9341_init();
+    ili9341_backlight(1);
+    ili9341_clear(BG_COLOR);
+    ili9341_setRotation(3);
+
+    // Initialize the button
+    DDRD &= ~(1 << BUTTON_PIN_1); // Set BUTTON_PIN as input
+    DDRD &= ~(1 << BUTTON_PIN_2); // Set BUTTON_PIN as input
+
+    // Display the title screen
+    displayTitleScreen();
+
+    // Current it is not working it breaks even if button is not pressed
+    // Wait for a button press}
+    // while (1) {
+    //     if (!(PIND & (1 << BUTTON_PIN_1)) || !(PIND & (1 << BUTTON_PIN_2))) {
+    //         ili9341_clear(BG_COLOR); // Clear the screen
+    //         break;
+    //     }
+    // }
+
+    // Draw a frame around the field
+    drawFieldFrame();
+
+    // Draw a net in the middle of the field
+    drawNet();
+
+    // Initialize the paddles
+    player1.pos.x = 0;
+    player1.pos.y = GAME_HEIGHT / 2;
+    player1.dy = 0;
+
+    player2.pos.x = SCREEN_WIDTH - PADDLE_WIDTH;
+    player2.pos.y = GAME_HEIGHT / 2;
+    player2.dy = 0;
+
+    // Initialize previous positions
+    prevPlayer1Pos = player1.pos;
+    prevPlayer2Pos = player2.pos;
+    prevBallPos = ball.pos;
+
+
+    // Set the ball to move in a random direction
+    srand(time(NULL)); // Seed the random number generator
+    ball.dx = (rand() % 2 == 0) ? -INITIAL_BALL_SPEED : INITIAL_BALL_SPEED; // Randomly move left or right
+    ball.dy = (rand() % 2 == 0) ? -INITIAL_BALL_SPEED : INITIAL_BALL_SPEED; // Randomly move up or down
+
+    // Draw the initial positions of the paddles and the ball
+    ili9341_fillrect(player1.pos.x, player1.pos.y + SCOREBOARD_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, PLAYER1_COLOR);
+    ili9341_fillrect(player2.pos.x, player2.pos.y + SCOREBOARD_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, PLAYER2_COLOR);
+    ili9341_fillrect(ball.pos.x, ball.pos.y + SCOREBOARD_HEIGHT, BALL_SIZE, BALL_SIZE, BALL_COLOR);
+}
+
+void loop() {
+    // Update the ball's position
+    ball.pos.x += ball.dx;
+    ball.pos.y += ball.dy;
+
+    // Define an offset for the ball's spawn position
+    #define SPAWN_OFFSET 10
+
+    // Check for collisions with the screen edges and respawn if necessary
+    if (ball.pos.x < 0) {
+        ball.pos.x = 1 + SPAWN_OFFSET; // Position the ball a bit in front of player 1's paddle
+        ball.pos.y = player1.pos.y + PADDLE_HEIGHT / 2; // Position the ball in the middle of player 1's paddle
+        ball.dx = abs(ball.dx); // Make sure the ball moves towards player 1
+        score.player2++;
+        ball.dx = INITIAL_BALL_SPEED;
+        ball.dy = INITIAL_BALL_SPEED;
+
+    } else if (ball.pos.x > SCREEN_WIDTH - BALL_SIZE) {
+        ball.pos.x = SCREEN_WIDTH - BALL_SIZE - 1 - SPAWN_OFFSET; // Position the ball a bit in front of player 2's paddle
+        ball.pos.y = player2.pos.y + PADDLE_HEIGHT / 2; // Position the ball in the middle of player 2's paddle
+        ball.dx = -abs(ball.dx); // Make sure the ball moves towards player 2
+        score.player1++;
+        ball.dx = INITIAL_BALL_SPEED;
+        ball.dy = INITIAL_BALL_SPEED;
+    }
+
+    if (ball.pos.y < FIELD_TOP-BALL_SIZE-5) {
+        ball.pos.y = FIELD_TOP-BALL_SIZE-5;
+        ball.dy = -ball.dy;
+        ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
+    } else if (ball.pos.y > FIELD_BOTTOM - BALL_SIZE-25) {
+        ball.pos.y = FIELD_BOTTOM - BALL_SIZE-25;
+        ball.dy = -ball.dy;
+        ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
+    }
+
+   // Check for collisions with the paddles
+    if ((ball.pos.x <= player1.pos.x + PADDLE_WIDTH && ball.pos.y >= player1.pos.y && ball.pos.y <= player1.pos.y + PADDLE_HEIGHT) ||
+        (ball.pos.x + BALL_SIZE+1 >= player2.pos.x && ball.pos.y >= player2.pos.y && ball.pos.y <= player2.pos.y + PADDLE_HEIGHT)) {
+        ball.dx = -ball.dx;
+    }
+    // Redraw player 1's paddle only if its position has changed
+    if (player1.pos.y != prevPlayer1Pos.y) {
+        ili9341_fillrect(prevPlayer1Pos.x, prevPlayer1Pos.y + SCOREBOARD_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, BG_COLOR);
+        ili9341_fillrect(player1.pos.x, player1.pos.y + SCOREBOARD_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, PLAYER1_COLOR);
+        prevPlayer1Pos = player1.pos;
+    }
+
+    // Redraw player 2's paddle only if its position has changed
+    if (player2.pos.y != prevPlayer2Pos.y) {
+        ili9341_fillrect(prevPlayer2Pos.x, prevPlayer2Pos.y + SCOREBOARD_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, BG_COLOR);
+        ili9341_fillrect(player2.pos.x, player2.pos.y + SCOREBOARD_HEIGHT, PADDLE_WIDTH, PADDLE_HEIGHT, PLAYER2_COLOR);
+        prevPlayer2Pos = player2.pos;
+    }
+
+    // Redraw the ball only if its position has changed
+    if (ball.pos.x != prevBallPos.x || ball.pos.y != prevBallPos.y) {
+        ili9341_fillrect(prevBallPos.x, prevBallPos.y + SCOREBOARD_HEIGHT, BALL_SIZE, BALL_SIZE, BG_COLOR);
+        ili9341_fillrect(ball.pos.x, ball.pos.y + SCOREBOARD_HEIGHT, BALL_SIZE, BALL_SIZE, BALL_COLOR);
+        prevBallPos = ball.pos;
+      
+    //Redraw the net
+        drawNet();
+    }
+    // Draw the scoreboard
+    ili9341_setcursor(0, 0);
+    ili9341_settextcolor(SCORE_COLOR, BG_COLOR);
+    ili9341_settextsize(2);
+    printf(" Player 1: %d | %d :Player 2",score.player1, score.player2);
+
+    _delay_ms(10);
+}
+int main() {
+    setup();
+    while (1) {
+        loop();
+    }
+    return 0;
+}
