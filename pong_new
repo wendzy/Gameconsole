@@ -83,6 +83,7 @@ Position prevPlayer1Pos;
 Position prevPlayer2Pos;
 Position prevBallPos;
 
+
 void playSound(int frequency, int duration) {
     // Set the PWM frequency
     OCR1A = (F_CPU / frequency / 2) - 1;
@@ -131,17 +132,21 @@ void drawNet() {
     }
 }
 
-
 void setup() {
     // Initialize the display
     ili9341_init();
     ili9341_backlight(1);
     ili9341_clear(BG_COLOR);
     ili9341_setRotation(3);
+    // Set the speaker pin as output
+    DDRD |= (1 << SPEAKER_PIN);
 
-    // Initialize the button
     DDRD &= ~(1 << BUTTON_PIN_1); // Set BUTTON_PIN as input
     DDRD &= ~(1 << BUTTON_PIN_2); // Set BUTTON_PIN as input
+
+    // Set Fast PWM mode and non-inverting output
+    TCCR1A |= (1 << COM1A1) | (1 << WGM11) | (1 << WGM10);
+    TCCR1B |= (1 << WGM12) | (1 << CS10);
 
     // Display the title screen
     displayTitleScreen();
@@ -170,10 +175,20 @@ void setup() {
     player2.pos.y = GAME_HEIGHT / 2;
     player2.dy = 0;
 
+    score.player1 = 0;
+    score.player2 = 0;
+
+
+    // Initialize the ball
+    ball.pos.x = SCREEN_WIDTH / 2;
+    ball.pos.y = GAME_HEIGHT / 2;
+
     // Initialize previous positions
     prevPlayer1Pos = player1.pos;
     prevPlayer2Pos = player2.pos;
     prevBallPos = ball.pos;
+
+    
 
 
     // Set the ball to move in a random direction
@@ -197,14 +212,23 @@ void loop() {
 
     // Check for collisions with the screen edges and respawn if necessary
     if (ball.pos.x < 0) {
+        PORTD |= (1 << SPEAKER_PIN);
+        playSound(257,490);
+        _delay_ms(100);
+        PORTD &= ~(1 << SPEAKER_PIN);
         ball.pos.x = 1 + SPAWN_OFFSET; // Position the ball a bit in front of player 1's paddle
         ball.pos.y = player1.pos.y + PADDLE_HEIGHT / 2; // Position the ball in the middle of player 1's paddle
         ball.dx = abs(ball.dx); // Make sure the ball moves towards player 1
         score.player2++;
         ball.dx = INITIAL_BALL_SPEED;
         ball.dy = INITIAL_BALL_SPEED;
+        
 
     } else if (ball.pos.x > SCREEN_WIDTH - BALL_SIZE) {
+        PORTD |= (1 << SPEAKER_PIN);
+        playSound(257,490);
+        _delay_ms(100);
+        PORTD &= ~(1 << SPEAKER_PIN);
         ball.pos.x = SCREEN_WIDTH - BALL_SIZE - 1 - SPAWN_OFFSET; // Position the ball a bit in front of player 2's paddle
         ball.pos.y = player2.pos.y + PADDLE_HEIGHT / 2; // Position the ball in the middle of player 2's paddle
         ball.dx = -abs(ball.dx); // Make sure the ball moves towards player 2
@@ -214,10 +238,18 @@ void loop() {
     }
 
     if (ball.pos.y < FIELD_TOP-BALL_SIZE-5) {
+        PORTD |= (1 << SPEAKER_PIN);
+        playSound(16,226);
+        _delay_ms(100);
+        PORTD &= ~(1 << SPEAKER_PIN);
         ball.pos.y = FIELD_TOP-BALL_SIZE-5;
         ball.dy = -ball.dy;
         ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
     } else if (ball.pos.y > FIELD_BOTTOM - BALL_SIZE-25) {
+        PORTD |= (1 << SPEAKER_PIN);
+        playSound(16,226);
+        _delay_ms(100);
+        PORTD &= ~(1 << SPEAKER_PIN);
         ball.pos.y = FIELD_BOTTOM - BALL_SIZE-25;
         ball.dy = -ball.dy;
         ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
@@ -225,7 +257,11 @@ void loop() {
 
    // Check for collisions with the paddles
     if ((ball.pos.x <= player1.pos.x + PADDLE_WIDTH && ball.pos.y >= player1.pos.y && ball.pos.y <= player1.pos.y + PADDLE_HEIGHT) ||
-        (ball.pos.x + BALL_SIZE+1 >= player2.pos.x && ball.pos.y >= player2.pos.y && ball.pos.y <= player2.pos.y + PADDLE_HEIGHT)) {
+        (ball.pos.x + BALL_SIZE+3 >= player2.pos.x && ball.pos.y >= player2.pos.y && ball.pos.y <= player2.pos.y + PADDLE_HEIGHT+3)) {
+        PORTD |= (1 << SPEAKER_PIN);
+        playSound(96,459);
+        _delay_ms(100);
+        PORTD &= ~(1 << SPEAKER_PIN);
         ball.dx = -ball.dx;
     }
     // Redraw player 1's paddle only if its position has changed
@@ -247,22 +283,47 @@ void loop() {
         ili9341_fillrect(prevBallPos.x, prevBallPos.y + SCOREBOARD_HEIGHT, BALL_SIZE, BALL_SIZE, BG_COLOR);
         ili9341_fillrect(ball.pos.x, ball.pos.y + SCOREBOARD_HEIGHT, BALL_SIZE, BALL_SIZE, BALL_COLOR);
         prevBallPos = ball.pos;
-      
-    //Redraw the net
+
         drawNet();
-    }
+
     // Draw the scoreboard
     ili9341_setcursor(0, 0);
     ili9341_settextcolor(SCORE_COLOR, BG_COLOR);
     ili9341_settextsize(2);
     printf(" Player 1: %d | %d :Player 2",score.player1, score.player2);
-
     _delay_ms(10);
+}
 }
 int main() {
     setup();
     while (1) {
         loop();
+    if (score.player2 == 1) {
+        _delay_ms(500);
+        ili9341_clear(BG_COLOR);
+        ili9341_setcursor(45, 110);
+        ili9341_settextcolor(FRAME_COLOR, BG_COLOR);
+        ili9341_settextsize(3);
+        printf("Player 2 wins");
+        _delay_ms(2000);
+        ili9341_clear(BG_COLOR);
+        score.player1 = 0;
+        score.player2 = 0;
+        break;
+        }
+    else if (score.player1 == 1) {
+         _delay_ms(500);
+        ili9341_clear(BG_COLOR);
+        ili9341_setcursor(45, 110);
+        ili9341_settextcolor(FRAME_COLOR, BG_COLOR);
+        ili9341_settextsize(3);
+        printf("Player 1 wins");
+        _delay_ms(2000);
+        ili9341_clear(BG_COLOR);
+        score.player1 = 0;
+        score.player2 = 0;
+        break;
+        }
     }
-    return 0;
+    return main();
 }
