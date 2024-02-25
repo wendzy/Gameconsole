@@ -210,6 +210,42 @@ void loop() {
     // Define an offset for the ball's spawn position
     #define SPAWN_OFFSET 10
 
+    // havent check if it works yet
+    //Check if PLAYER1_UP_BUTTON is pressed
+    if (!(PINC & (1 << PLAYER1_UP_BUTTON))) {
+        // Move player 1's paddle up
+        player1.pos.y -= PADDLE_SPEED;
+        if (player1.pos.y < FIELD_TOP) {
+            player1.pos.y = FIELD_TOP;
+        }
+    }
+
+    //Check if PLAYER1_DOWN_BUTTON is pressed
+    if (!(PINC & (1 << PLAYER1_DOWN_BUTTON))) {
+        // Move player 1's paddle down
+        player1.pos.y += PADDLE_SPEED;
+        if (player1.pos.y > FIELD_BOTTOM - PADDLE_HEIGHT) {
+            player1.pos.y = FIELD_BOTTOM - PADDLE_HEIGHT;
+        }
+    }
+
+    // Check if PLAYER2_UP_BUTTON is pressed
+    if (!(PIND & (1 << PLAYER2_UP_BUTTON))) {
+        // Move player 2's paddle up
+        player2.pos.y -= PADDLE_SPEED;
+        if (player2.pos.y < FIELD_TOP) {
+            player2.pos.y = FIELD_TOP;
+        }
+    }
+
+    // Check if PLAYER2_DOWN_BUTTON is pressed
+    if (!(PIND & (1 << PLAYER2_DOWN_BUTTON))) {
+        // Move player 2's paddle down
+        player2.pos.y += PADDLE_SPEED;
+        if (player2.pos.y > FIELD_BOTTOM - PADDLE_HEIGHT) {
+            player2.pos.y = FIELD_BOTTOM - PADDLE_HEIGHT;
+        }
+    }
     // Check for collisions with the screen edges and respawn if necessary
     if (ball.pos.x < 0) {
         PORTD |= (1 << SPEAKER_PIN);
