@@ -141,6 +141,11 @@ void setup() {
     // Set the speaker pin as output
     DDRD |= (1 << SPEAKER_PIN);
 
+    DDRC &= ~(1 << PLAYER1_UP_BUTTON);
+    DDRC &= ~(1 << PLAYER1_DOWN_BUTTON);
+    DDRD &= ~(1 << PLAYER2_UP_BUTTON);
+    DDRD &= ~(1 << PLAYER2_DOWN_BUTTON);
+    
     DDRD &= ~(1 << BUTTON_PIN_1); // Set BUTTON_PIN as input
     DDRD &= ~(1 << BUTTON_PIN_2); // Set BUTTON_PIN as input
 
