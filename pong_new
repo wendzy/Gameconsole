@@ -37,9 +37,9 @@
 #define BG_COLOR ILI9341_COLOR_BLACK
 #define SCORE_COLOR ILI9341_COLOR_WHITE
 #define FRAME_COLOR ILI9341_COLOR_WHITE
-#define INITIAL_BALL_SPEED 10
-#define SPEED_INCREMENT 2
-
+#define INITIAL_BALL_SPEED 25
+#define SPEED_INCREMENT 5
+#define PADDLE_SPEED 25
 typedef struct {
     int x, y;
 } Position;
@@ -193,9 +193,6 @@ void setup() {
     prevPlayer2Pos = player2.pos;
     prevBallPos = ball.pos;
 
-    
-
-
     // Set the ball to move in a random direction
     srand(time(NULL)); // Seed the random number generator
     ball.dx = (rand() % 2 == 0) ? -INITIAL_BALL_SPEED : INITIAL_BALL_SPEED; // Randomly move left or right
@@ -217,16 +214,15 @@ void loop() {
 
     // havent check if it works yet
     //Check if PLAYER1_UP_BUTTON is pressed
-    if (!(PINC & (1 << PLAYER1_UP_BUTTON))) {
+    if ((PINC & (1 << PLAYER1_UP_BUTTON))) {
         // Move player 1's paddle up
         player1.pos.y -= PADDLE_SPEED;
         if (player1.pos.y < FIELD_TOP) {
             player1.pos.y = FIELD_TOP;
         }
     }
-
     //Check if PLAYER1_DOWN_BUTTON is pressed
-    if (!(PINC & (1 << PLAYER1_DOWN_BUTTON))) {
+    if ((PINC & (1 << PLAYER1_DOWN_BUTTON))) {
         // Move player 1's paddle down
         player1.pos.y += PADDLE_SPEED;
         if (player1.pos.y > FIELD_BOTTOM - PADDLE_HEIGHT) {
@@ -235,28 +231,24 @@ void loop() {
     }
 
     // Check if PLAYER2_UP_BUTTON is pressed
-    if (!(PIND & (1 << PLAYER2_UP_BUTTON))) {
+    if ((PIND & (1 << PLAYER2_UP_BUTTON))) {
         // Move player 2's paddle up
-        player2.pos.y -= PADDLE_SPEED;
+        player2.pos.y += PADDLE_SPEED;
         if (player2.pos.y < FIELD_TOP) {
             player2.pos.y = FIELD_TOP;
         }
     }
-
+    
     // Check if PLAYER2_DOWN_BUTTON is pressed
-    if (!(PIND & (1 << PLAYER2_DOWN_BUTTON))) {
+    if ((PIND & (1 << PLAYER2_DOWN_BUTTON))) {
         // Move player 2's paddle down
-        player2.pos.y += PADDLE_SPEED;
+        player2.pos.y -= PADDLE_SPEED;
         if (player2.pos.y > FIELD_BOTTOM - PADDLE_HEIGHT) {
             player2.pos.y = FIELD_BOTTOM - PADDLE_HEIGHT;
         }
     }
     // Check for collisions with the screen edges and respawn if necessary
     if (ball.pos.x < 0) {
-        PORTD |= (1 << SPEAKER_PIN);
-        playSound(257,490);
-        _delay_ms(100);
-        PORTD &= ~(1 << SPEAKER_PIN);
         ball.pos.x = 1 + SPAWN_OFFSET; // Position the ball a bit in front of player 1's paddle
         ball.pos.y = player1.pos.y + PADDLE_HEIGHT / 2; // Position the ball in the middle of player 1's paddle
         ball.dx = abs(ball.dx); // Make sure the ball moves towards player 1
@@ -266,10 +258,6 @@ void loop() {
         
 
     } else if (ball.pos.x > SCREEN_WIDTH - BALL_SIZE) {
-        PORTD |= (1 << SPEAKER_PIN);
-        playSound(257,490);
-        _delay_ms(100);
-        PORTD &= ~(1 << SPEAKER_PIN);
         ball.pos.x = SCREEN_WIDTH - BALL_SIZE - 1 - SPAWN_OFFSET; // Position the ball a bit in front of player 2's paddle
         ball.pos.y = player2.pos.y + PADDLE_HEIGHT / 2; // Position the ball in the middle of player 2's paddle
         ball.dx = -abs(ball.dx); // Make sure the ball moves towards player 2
@@ -279,18 +267,10 @@ void loop() {
     }
 
     if (ball.pos.y < FIELD_TOP-BALL_SIZE-5) {
-        PORTD |= (1 << SPEAKER_PIN);
-        playSound(16,226);
-        _delay_ms(100);
-        PORTD &= ~(1 << SPEAKER_PIN);
         ball.pos.y = FIELD_TOP-BALL_SIZE-5;
         ball.dy = -ball.dy;
         ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
     } else if (ball.pos.y > FIELD_BOTTOM - BALL_SIZE-25) {
-        PORTD |= (1 << SPEAKER_PIN);
-        playSound(16,226);
-        _delay_ms(100);
-        PORTD &= ~(1 << SPEAKER_PIN);
         ball.pos.y = FIELD_BOTTOM - BALL_SIZE-25;
         ball.dy = -ball.dy;
         ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
@@ -299,10 +279,6 @@ void loop() {
    // Check for collisions with the paddles
     if ((ball.pos.x <= player1.pos.x + PADDLE_WIDTH && ball.pos.y >= player1.pos.y && ball.pos.y <= player1.pos.y + PADDLE_HEIGHT) ||
         (ball.pos.x + BALL_SIZE+3 >= player2.pos.x && ball.pos.y >= player2.pos.y && ball.pos.y <= player2.pos.y + PADDLE_HEIGHT+3)) {
-        PORTD |= (1 << SPEAKER_PIN);
-        playSound(96,459);
-        _delay_ms(100);
-        PORTD &= ~(1 << SPEAKER_PIN);
         ball.dx = -ball.dx;
     }
     // Redraw player 1's paddle only if its position has changed
@@ -339,7 +315,7 @@ int main() {
     setup();
     while (1) {
         loop();
-    if (score.player2 == 1) {
+    if (score.player2 == 7) {
         _delay_ms(500);
         ili9341_clear(BG_COLOR);
         ili9341_setcursor(45, 110);
@@ -352,7 +328,7 @@ int main() {
         score.player2 = 0;
         break;
         }
-    else if (score.player1 == 1) {
+    else if (score.player1 == 7) {
          _delay_ms(500);
         ili9341_clear(BG_COLOR);
         ili9341_setcursor(45, 110);
