@@ -192,6 +192,7 @@ void loop() {
     // Update the ball's position
     ball.pos.x += ball.dx;
     ball.pos.y += ball.dy;
+    bool hitWall = false;
 
     // Define an offset for the ball's spawn position
     #define SPAWN_OFFSET 10
@@ -262,26 +263,29 @@ void loop() {
         ball.dx = INITIAL_BALL_SPEED;
         ball.dy = INITIAL_BALL_SPEED;
     }
+     // Check for collisions with the paddles
+    if ((ball.pos.x <= player1.pos.x + PADDLE_WIDTH && ball.pos.y >= player1.pos.y && ball.pos.y <= player1.pos.y + PADDLE_HEIGHT) ||
+        (ball.pos.x + BALL_SIZE+3 >= player2.pos.x && ball.pos.y >= player2.pos.y && ball.pos.y <= player2.pos.y + PADDLE_HEIGHT+3)) {
+        // If the ball hits the paddle after hitting the wall, change its y-direction
+        if (hitWall) {
+            ball.dy = -ball.dy;
+            hitWall = false; // Reset the hitWall variable
+        }
+        ball.dx = -ball.dx;
+    }
 
+    // Check if the ball hits the top or bottom of the field
     if (ball.pos.y < FIELD_TOP-BALL_SIZE-5) {
         ball.pos.y = FIELD_TOP-BALL_SIZE-5;
         ball.dy = -ball.dy;
         ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
+        hitWall = true;
 
     } else if (ball.pos.y > FIELD_BOTTOM - BALL_SIZE-25) {
         ball.pos.y = FIELD_BOTTOM - BALL_SIZE-25;
         ball.dy = -ball.dy;
         ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
-    }
-
- // Check for collisions with the paddles
-    if ((ball.pos.x <= player1.pos.x + PADDLE_WIDTH && ball.pos.y >= player1.pos.y && ball.pos.y <= player1.pos.y + PADDLE_HEIGHT) ||
-        (ball.pos.x + BALL_SIZE+3 >= player2.pos.x && ball.pos.y >= player2.pos.y && ball.pos.y <= player2.pos.y + PADDLE_HEIGHT+3)) {
-        // Change its y-direction
-        if (ball.pos.y == FIELD_TOP-BALL_SIZE-5 || ball.pos.y == FIELD_BOTTOM - BALL_SIZE-25) {
-            ball.dy = -ball.dy;
-        }
-        ball.dx = -ball.dx;
+        hitWall = true;
     }
     // Redraw player 1's paddle only if its position has changed
     if (player1.pos.y != prevPlayer1Pos.y) {
