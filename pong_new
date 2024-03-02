@@ -108,13 +108,6 @@ void displayTitleScreen() {
     printf("Microcontroller Project");
     _delay_ms(2000);
     ili9341_clear(BG_COLOR); // Clear the screen
-    // Uncomment when the break line is fixed
-    // ili9341_setcursor(80, 100);
-    // ili9341_settextcolor(FRAME_COLOR, BG_COLOR);
-    // ili9341_settextsize(2);
-    // printf("Press any button");
-    // ili9341_setcursor(100, 120);
-    // printf("to start the game");
 }
 
 
@@ -155,15 +148,6 @@ void setup() {
 
     // Display the title screen
     displayTitleScreen();
-
-    // Current it is not working it breaks even if button is not pressed
-    // Wait for a button press}
-    // while (1) {
-    //     if (!(PIND & (1 << BUTTON_PIN_1)) || !(PIND & (1 << BUTTON_PIN_2))) {
-    //         ili9341_clear(BG_COLOR); // Clear the screen
-    //         break;
-    //     }
-    // }
 
     // Draw a frame around the field
     drawFieldFrame();
@@ -283,15 +267,20 @@ void loop() {
         ball.pos.y = FIELD_TOP-BALL_SIZE-5;
         ball.dy = -ball.dy;
         ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
+
     } else if (ball.pos.y > FIELD_BOTTOM - BALL_SIZE-25) {
         ball.pos.y = FIELD_BOTTOM - BALL_SIZE-25;
         ball.dy = -ball.dy;
         ball.dy += (ball.dy > 0) ? SPEED_INCREMENT : -SPEED_INCREMENT; // Increase speed
     }
 
-   // Check for collisions with the paddles
+ // Check for collisions with the paddles
     if ((ball.pos.x <= player1.pos.x + PADDLE_WIDTH && ball.pos.y >= player1.pos.y && ball.pos.y <= player1.pos.y + PADDLE_HEIGHT) ||
         (ball.pos.x + BALL_SIZE+3 >= player2.pos.x && ball.pos.y >= player2.pos.y && ball.pos.y <= player2.pos.y + PADDLE_HEIGHT+3)) {
+        // Change its y-direction
+        if (ball.pos.y == FIELD_TOP-BALL_SIZE-5 || ball.pos.y == FIELD_BOTTOM - BALL_SIZE-25) {
+            ball.dy = -ball.dy;
+        }
         ball.dx = -ball.dx;
     }
     // Redraw player 1's paddle only if its position has changed
@@ -328,7 +317,7 @@ int main() {
     setup();
     while (1) {
         loop();
-    if (score.player2 == 7) {
+    if (score.player2 == 10){
         _delay_ms(500);
         ili9341_clear(BG_COLOR);
         ili9341_setcursor(45, 110);
@@ -341,7 +330,7 @@ int main() {
         score.player2 = 0;
         break;
         }
-    else if (score.player1 == 7) {
+    else if (score.player1 == 10) {
          _delay_ms(500);
         ili9341_clear(BG_COLOR);
         ili9341_setcursor(45, 110);
