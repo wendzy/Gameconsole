@@ -247,6 +247,11 @@ void loop() {
         ball.dx = abs(ball.dx); // Make sure the ball moves towards player 1
         ball.dx = INITIAL_BALL_SPEED;
         ball.dy = INITIAL_BALL_SPEED;
+
+        // Randomly decide whether the ball should go upwards or downwards
+        if (rand() % 2 == 0) {
+        ball.dy = -ball.dy;
+    }
     }
 
     // Check if the ball has passed player 2's paddle
@@ -262,6 +267,11 @@ void loop() {
         ball.dx = -abs(ball.dx); // Make sure the ball moves towards player 2
         ball.dx = INITIAL_BALL_SPEED;
         ball.dy = INITIAL_BALL_SPEED;
+
+                    // Randomly decide whether the ball should go upwards or downwards
+        if (rand() % 2 == 0) {
+        ball.dy = -ball.dy;
+    }
     }
      // Check for collisions with the paddles
     if ((ball.pos.x <= player1.pos.x + PADDLE_WIDTH && ball.pos.y >= player1.pos.y && ball.pos.y <= player1.pos.y + PADDLE_HEIGHT) ||
